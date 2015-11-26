@@ -40,7 +40,7 @@ public class InjectionContainer extends Injector {
 		this.registerProvider(new TypeRegistration<>(impl, iFace));
 	}
 
-	public <T> void registerSupplier(Class<T> type, Supplier<T> supplier) {
+	public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
 		injectionSupplier.put(type, supplier);
 	}
 

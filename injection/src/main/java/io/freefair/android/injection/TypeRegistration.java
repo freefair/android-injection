@@ -20,7 +20,7 @@ public class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionPro
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T provide(Class<T> clazz, Object instance, Injector injector) {
+	public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
 		return (T) injector.resolveValue(implClass, instance);
 	}
 }
