@@ -4,9 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import io.freefair.android.util.function.Predicate;
 
-/**
- * Created by larsgrefer on 16.03.15.
- */
 public class FieldAnnotationPredicate implements Predicate<Field> {
 
 	private Class<? extends Annotation> annotation;

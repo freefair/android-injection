@@ -1,8 +1,5 @@
 package io.freefair.android.injection.exceptions;
 
-/**
- * Created by larsgrefer on 29.06.15.
- */
 public class InjectionException extends RuntimeException {
 	public InjectionException() {
 	}

@@ -8,7 +8,7 @@ import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 /**
- * Created by Dennis Fricke on 28.01.2015.
+ * @author Dennis Fricke
  */
 public class ViewGroupInjector extends AndroidInjector<ViewGroup> {
 	public ViewGroupInjector(ViewGroup object, Injector parentInjector) {

@@ -7,11 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to set the RClass
- *
- * Created by larsgrefer on 27.11.14.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RClass {
-	Class<?> value();
+    Class<?> value();
 }

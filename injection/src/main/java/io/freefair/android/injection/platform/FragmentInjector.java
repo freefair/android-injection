@@ -7,9 +7,6 @@ import android.view.View;
 import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
-/**
- * Created by larsgrefer on 24.11.14.
- */
 public class FragmentInjector extends AndroidInjector<Fragment> {
 
 	private IViewFinder viewFinder;

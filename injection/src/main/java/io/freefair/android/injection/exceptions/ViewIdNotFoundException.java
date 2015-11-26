@@ -1,8 +1,5 @@
 package io.freefair.android.injection.exceptions;
 
-/**
- * Created by larsgrefer on 23.11.14.
- */
 public class ViewIdNotFoundException extends InjectionException {
 
 	public ViewIdNotFoundException() {

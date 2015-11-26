@@ -1,8 +1,5 @@
 package io.freefair.android.injection;
 
-/**
- * Created by larsgrefer on 12.10.15.
- */
 public class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionProvider {
 
 	private final Class<IMPL> implClass;

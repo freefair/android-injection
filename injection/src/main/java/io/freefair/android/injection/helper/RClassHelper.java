@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 import io.freefair.android.injection.annotation.RClass;
 import io.freefair.android.util.logging.*;
 
-/**
- * Created by larsgrefer on 27.11.14.
- */
 public class RClassHelper {
 
 	protected static Logger log = AndroidLogger.forClass(RClassHelper.class);

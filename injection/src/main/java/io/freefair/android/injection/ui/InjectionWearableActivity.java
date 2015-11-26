@@ -10,6 +10,9 @@ import io.freefair.android.injection.InjectorProvider;
 import io.freefair.android.injection.exceptions.ViewIdNotFoundException;
 import io.freefair.android.injection.platform.WatchViewStubActivityInjector;
 
+/**
+ * @author Dennis Fricke
+ */
 public abstract class InjectionWearableActivity extends Activity implements InjectorProvider {
 	WatchViewStubActivityInjector injector;
 
