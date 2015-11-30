@@ -6,7 +6,7 @@ import io.realm.Realm;
 public class DefaultRealmProvider extends BaseRealmProvider {
 
     @Override
-    public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
-        return (T) Realm.getDefaultInstance();
+    protected Realm createRealm(Object instance, Injector injector) {
+        return Realm.getDefaultInstance();
     }
 }
