@@ -33,7 +33,7 @@ configure(subprojects - project(':modules')) {
         }
 
         lintOptions {
-            xmlReport !isCi
+            xmlReport false
             htmlReport !isCi
             textOutput 'stdout'
             textReport isCi

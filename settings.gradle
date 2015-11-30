@@ -1,3 +1,4 @@
 include ':injection'
 include ':modules:logging'
+include ':modules:realm'
 include ':modules:okhttp'
