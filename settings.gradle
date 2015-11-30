@@ -1,2 +1,3 @@
 include ':injection'
 include ':modules:logging'
+include ':modules:realm'
