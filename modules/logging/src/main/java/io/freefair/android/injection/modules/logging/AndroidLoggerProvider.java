@@ -1,4 +1,4 @@
-package io.freefair.android.injection.provider;
+package io.freefair.android.injection.modules.logging;
 
 import io.freefair.android.injection.InjectionProvider;
 import io.freefair.android.injection.Injector;
