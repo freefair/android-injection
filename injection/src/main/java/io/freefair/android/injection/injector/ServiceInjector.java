@@ -1,8 +1,7 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.app.Service;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 public class ServiceInjector extends AndroidResourceInjector<Service> {

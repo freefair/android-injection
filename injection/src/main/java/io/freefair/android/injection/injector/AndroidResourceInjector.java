@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import io.freefair.android.injection.InjectionContainer;
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 import io.freefair.android.injection.exceptions.InjectionException;

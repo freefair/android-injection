@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 
-import io.freefair.android.injection.InjectionContainer;
-import io.freefair.android.injection.Injector;
+import io.freefair.android.injection.injector.InjectionContainer;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.injection.InjectorProvider;
 import io.freefair.android.injection.exceptions.ViewIdNotFoundException;
-import io.freefair.android.injection.platform.WatchViewStubActivityInjector;
+import io.freefair.android.injection.injector.WatchViewStubActivityInjector;
 
 /**
  * @author Dennis Fricke

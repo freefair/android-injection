@@ -1,4 +1,4 @@
-package io.freefair.android.injection;
+package io.freefair.android.injection.injector;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.freefair.android.injection.DefaultModule;
+import io.freefair.android.injection.InjectionProvider;
+import io.freefair.android.injection.TypeRegistration;
 import io.freefair.android.util.function.Supplier;
 import io.freefair.android.util.function.Optional;
 import io.freefair.android.injection.annotation.Inject;

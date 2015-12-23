@@ -2,9 +2,9 @@ package io.freefair.android.injection.ui;
 
 import android.app.Service;
 
-import io.freefair.android.injection.Injector;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.injection.InjectorProvider;
-import io.freefair.android.injection.platform.ServiceInjector;
+import io.freefair.android.injection.injector.ServiceInjector;
 
 /**
  * A {@link Service} with support for dependency injection

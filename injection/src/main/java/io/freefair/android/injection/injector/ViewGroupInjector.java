@@ -1,10 +1,9 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.support.annotation.IdRes;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 /**

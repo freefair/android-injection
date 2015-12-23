@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.freefair.android.injection.annotation.Inject;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.util.function.Suppliers;
 
 import static org.junit.Assert.*;

@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.squareup.okhttp.OkHttpClient;
 
-import io.freefair.android.injection.InjectionContainer;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
 import io.freefair.android.injection.modules.retrofit.ServiceProvider;
 import io.freefair.android.util.function.Consumer;

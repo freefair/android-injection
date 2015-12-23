@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.app.Activity;
 import android.content.res.Resources;

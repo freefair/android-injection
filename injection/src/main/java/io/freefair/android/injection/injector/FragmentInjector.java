@@ -1,10 +1,9 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 public class FragmentInjector extends AndroidViewInjector<Fragment> {

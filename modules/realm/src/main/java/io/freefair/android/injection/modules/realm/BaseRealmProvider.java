@@ -1,7 +1,7 @@
 package io.freefair.android.injection.modules.realm;
 
 import io.freefair.android.injection.InjectionProvider;
-import io.freefair.android.injection.Injector;
+import io.freefair.android.injection.injector.Injector;
 import io.realm.Realm;
 
 abstract class BaseRealmProvider implements InjectionProvider {

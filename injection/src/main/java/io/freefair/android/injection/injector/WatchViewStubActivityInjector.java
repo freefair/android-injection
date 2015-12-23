@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 /**

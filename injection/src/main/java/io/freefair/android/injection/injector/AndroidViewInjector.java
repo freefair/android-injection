@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.annotation.InjectView;
 import io.freefair.android.injection.exceptions.ViewIdNotFoundException;
 import io.freefair.android.util.logging.AndroidLogger;
