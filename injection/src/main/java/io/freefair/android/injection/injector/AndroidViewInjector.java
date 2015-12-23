@@ -5,12 +5,11 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import io.freefair.android.injection.annotation.InjectView;
 import io.freefair.android.injection.exceptions.ViewIdNotFoundException;
+import io.freefair.android.injection.helper.Bindings;
 import io.freefair.android.util.logging.AndroidLogger;
 import io.freefair.android.util.logging.Logger;
 
@@ -25,14 +24,14 @@ public abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> 
     @Override
     protected void inject(@NonNull Object instance, @NonNull Field field) {
         if (field.isAnnotationPresent(InjectView.class)) {
-            getViewBinding().put(field, findViewId(field));
+            Bindings.getViewBinding(getObjectClass()).put(field, findViewId(field));
         } else {
             super.inject(instance, field);
         }
     }
 
     public void injectViews() {
-        for (Map.Entry<Field, Integer> viewBinding : getViewBinding().entrySet()) {
+        for (Map.Entry<Field, Integer> viewBinding : Bindings.getViewBinding(getObjectClass()).entrySet()) {
             View view = findViewById(viewBinding.getValue());
             inject(viewBinding.getKey(), view);
         }
@@ -64,13 +63,4 @@ public abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> 
 
         throw new ViewIdNotFoundException(fieldName);
     }
-
-    private Map<Field, Integer> getViewBinding() {
-        if (!viewBindings.containsKey(getObjectClass())) {
-            viewBindings.put(getObjectClass(), new HashMap<Field, Integer>());
-        }
-        return viewBindings.get(getObjectClass());
-    }
-
-    private static WeakHashMap<Class<?>, Map<Field, Integer>> viewBindings = new WeakHashMap<>();
 }

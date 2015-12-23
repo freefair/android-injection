@@ -12,13 +12,12 @@ import android.support.annotation.NonNull;
 import android.util.TypedValue;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 import io.freefair.android.injection.exceptions.InjectionException;
+import io.freefair.android.injection.helper.Bindings;
 import io.freefair.android.injection.reflection.Reflection;
 import io.freefair.android.util.function.Optional;
 import io.freefair.android.util.logging.AndroidLogger;
@@ -74,9 +73,9 @@ public class AndroidResourceInjector<T> extends Injector {
 	@Override
 	protected void inject(@NonNull Object instance, @NonNull Field field) {
 		if (field.isAnnotationPresent(InjectResource.class)) {
-			getBinding().resources.put(field, field.getAnnotation(InjectResource.class));
+            Bindings.getResourceBinding(getObjectClass()).put(field, field.getAnnotation(InjectResource.class));
 		} else if (field.isAnnotationPresent(InjectAttribute.class)) {
-			getBinding().attributes.put(field, field.getAnnotation(InjectAttribute.class));
+			Bindings.getAttributeBinding(getObjectClass()).put(field, field.getAnnotation(InjectAttribute.class));
 		} else {
 			super.inject(instance, field);
 		}
@@ -88,10 +87,11 @@ public class AndroidResourceInjector<T> extends Injector {
 
 	public void injectAttributes() {
 
-		int[] attrIds = new int[getBinding().attributes.size()];
+        Map<Field, InjectAttribute> attributeBinding = Bindings.getAttributeBinding(getObjectClass());
+        int[] attrIds = new int[attributeBinding.size()];
 
 		int i = 0;
-		for (Map.Entry<Field, InjectAttribute> entry : getBinding().attributes.entrySet()) {
+		for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
 			InjectAttribute annotation = entry.getValue();
 			attrIds[i] = annotation.id();
 
@@ -105,7 +105,7 @@ public class AndroidResourceInjector<T> extends Injector {
 		TypedArray typedArray = resolveValue(Resources.Theme.class, getObject()).obtainStyledAttributes(attrIds);
 
 		int index = 0;
-		for (Map.Entry<Field, InjectAttribute> entry : getBinding().attributes.entrySet()) {
+		for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
 
 			Field field = entry.getKey();
 			field.setAccessible(true);
@@ -203,7 +203,7 @@ public class AndroidResourceInjector<T> extends Injector {
 		if (resources == null)
 			throw new InjectionException("Resources.class not found");
 
-		for (Map.Entry<Field, InjectResource> resourceBinding : getBinding().resources.entrySet()) {
+		for (Map.Entry<Field, InjectResource> resourceBinding : Bindings.getResourceBinding(getObjectClass()).entrySet()) {
 			Field field = resourceBinding.getKey();
 			InjectResource annotation = resourceBinding.getValue();
 			int resourceId = annotation.id();
@@ -326,25 +326,6 @@ public class AndroidResourceInjector<T> extends Injector {
 			return (T) resolveValue(Context.class, instance).getResources();
 
 		return super.resolveValue(type, instance);
-	}
-
-    private Binding getBinding() {
-        if (!bindings.containsKey(getObjectClass())) {
-            bindings.put(getObjectClass(), new Binding());
-        }
-        return bindings.get(getObjectClass());
-    }
-
-	private static WeakHashMap<Class<?>, Binding> bindings = new WeakHashMap<>();
-
-	public static class Binding {
-		Map<Field, InjectAttribute> attributes;
-		Map<Field, InjectResource> resources;
-
-		Binding() {
-			attributes = new HashMap<>();
-			resources = new HashMap<>();
-		}
 	}
 
 }
