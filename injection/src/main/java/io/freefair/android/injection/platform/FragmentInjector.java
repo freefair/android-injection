@@ -7,9 +7,7 @@ import android.view.View;
 import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
-public class FragmentInjector extends AndroidInjector<Fragment> {
-
-	private IViewFinder viewFinder;
+public class FragmentInjector extends AndroidViewInjector<Fragment> {
 
 	public FragmentInjector(Fragment fragment, Injector parentInjector){
 		super(parentInjector, fragment, RClassHelper.getRClassFromFragment(fragment));
@@ -21,14 +19,6 @@ public class FragmentInjector extends AndroidInjector<Fragment> {
 		if( getObject().getView() != null){
 			return getObject().getView().findViewById(viewId);
 		}
-		else if(viewFinder != null){
-			return viewFinder.findViewById(viewId);
-		}
 		return null;
 	}
-
-	public void setViewFinder( IViewFinder viewFinder ) {
-		this.viewFinder = viewFinder;
-	}
-
 }

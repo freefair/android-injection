@@ -14,49 +14,49 @@ import io.freefair.android.injection.platform.WatchViewStubActivityInjector;
  * @author Dennis Fricke
  */
 public abstract class InjectionWearableActivity extends Activity implements InjectorProvider {
-	WatchViewStubActivityInjector injector;
+    WatchViewStubActivityInjector injector;
 
-	Injector parentInjector;
+    Injector parentInjector;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		parentInjector = InjectionContainer.getInstance();
-		parentInjector.inject(this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        parentInjector = InjectionContainer.getInstance();
+        parentInjector.inject(this);
 
-	}
+    }
 
-	public void setContentView(int layoutResID, int viewStubID) {
-		super.setContentView(layoutResID);
-		final WatchViewStub stub = (WatchViewStub) findViewById(viewStubID);
+    public void setContentView(int layoutResID, int viewStubID) {
+        super.setContentView(layoutResID);
+        final WatchViewStub stub = (WatchViewStub) findViewById(viewStubID);
 
-		stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-			@Override
-			public void onLayoutInflated(WatchViewStub stub) {
-				injector = new WatchViewStubActivityInjector(InjectionWearableActivity.this, stub, parentInjector);
+        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
+            @Override
+            public void onLayoutInflated(WatchViewStub stub) {
+                injector = new WatchViewStubActivityInjector(InjectionWearableActivity.this, stub, parentInjector);
 
-				injector.injectResources();
-				injector.injectAttributes();
+                injector.injectResources();
+                injector.injectAttributes();
 
-				tryInjectViews();
+                tryInjectViews();
 
-				onLayoutReady();
-			}
-		});
-	}
+                onLayoutReady();
+            }
+        });
+    }
 
-	private void tryInjectViews() {
-		try {
-			injector.injectViews();
-		} catch (ViewIdNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    private void tryInjectViews() {
+        try {
+            injector.injectViews();
+        } catch (ViewIdNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	protected abstract void onLayoutReady();
+    protected abstract void onLayoutReady();
 
-	@Override
-	public WatchViewStubActivityInjector getInjector() {
-		return injector;
-	}
+    @Override
+    public WatchViewStubActivityInjector getInjector() {
+        return injector;
+    }
 }

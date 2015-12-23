@@ -6,10 +6,9 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
-public class ActivityInjector extends AndroidInjector<Activity> {
+public class ActivityInjector extends AndroidViewInjector<Activity> {
 
 	public ActivityInjector(Activity activity){
 		super(null, activity, RClassHelper.getRClassFromActivity(activity));

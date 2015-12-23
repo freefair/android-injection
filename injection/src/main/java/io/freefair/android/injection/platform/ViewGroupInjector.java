@@ -10,7 +10,7 @@ import io.freefair.android.injection.helper.RClassHelper;
 /**
  * @author Dennis Fricke
  */
-public class ViewGroupInjector extends AndroidInjector<ViewGroup> {
+public class ViewGroupInjector extends AndroidViewInjector<ViewGroup> {
 	public ViewGroupInjector(ViewGroup object, Injector parentInjector) {
 		super(parentInjector, object, RClassHelper.getRClassFromViewGroup(object));
 	}

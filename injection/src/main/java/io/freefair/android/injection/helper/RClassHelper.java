@@ -2,6 +2,8 @@ package io.freefair.android.injection.helper;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
@@ -12,19 +14,20 @@ public class RClassHelper {
 
 	protected static Logger log = AndroidLogger.forClass(RClassHelper.class);
 
+	@Nullable
 	static Class<?> getRClassFromAnnotation(Object object) {
 		if (object.getClass().isAnnotationPresent(RClass.class)) {
 			Class<?> rClass = object.getClass().getAnnotation(RClass.class).value();
 			String rClassName = rClass.getSimpleName();
-			if (rClassName.equals("R")) {
-				return rClass;
-			} else {
-				log.error("The name of the class given via @RClass should be 'R', but was '" + rClassName + "'");
+			if (!rClassName.equals("R")) {
+				log.warn("The name of the class given via @RClass should be 'R', but was '" + rClassName + "'");
 			}
+			return rClass;
 		}
 		return null;
 	}
 
+	@Nullable
 	public static Class<?> getRClassFromFragment(Fragment fragment) {
 		Class<?> rClass = getRClassFromAnnotation(fragment);
 		if (rClass != null) {
@@ -33,6 +36,7 @@ public class RClassHelper {
 		return getRClassFromActivity(fragment.getActivity());
 	}
 
+	@Nullable
 	public static Class<?> getRClassFromActivity(Activity activity) {
 		Class<?> rClass = getRClassFromAnnotation(activity);
 		if (rClass != null) {
@@ -41,6 +45,15 @@ public class RClassHelper {
 		return getRClassFromApplication(activity.getApplication());
 	}
 
+	@Nullable
+	public static Class<?> getRClassFromService(Service service){
+		Class<?> rClassFromAnnotation = getRClassFromAnnotation(service);
+		if(rClassFromAnnotation != null)
+			return rClassFromAnnotation;
+		return getRClassFromApplication(service.getApplication());
+	}
+
+	@Nullable
 	private static Class<?> getRClassFromApplication(Application application) {
 		Class<?> rClass = getRClassFromAnnotation(application);
 		if (rClass != null) {
@@ -49,6 +62,7 @@ public class RClassHelper {
 		return getRClassFromPackageName(application.getPackageName());
 	}
 
+	@Nullable
 	static Class<?> getRClassFromPackageName(String packageName) {
 		String rClassName = packageName + ".R";
 		try {
@@ -59,6 +73,7 @@ public class RClassHelper {
 		return null;
 	}
 
+	@Nullable
 	public static Class<?> getRClassFromViewGroup(ViewGroup object) {
 		Class<?> rClass = getRClassFromAnnotation(object);
 		if (rClass != null) {

@@ -3,26 +3,29 @@ package io.freefair.android.injection.ui;
 import android.app.Application;
 
 import io.freefair.android.injection.InjectionContainer;
+import io.freefair.android.injection.InjectorProvider;
 import io.freefair.android.util.function.Suppliers;
 
 /**
  * An {@link Application} with support for dependency injection
  */
-public class InjectionApplication extends Application {
-	private InjectionContainer injector;
+@SuppressWarnings("unused")
+public class InjectionApplication extends Application implements InjectorProvider {
 
-	public InjectionApplication() {
-		injector = InjectionContainer.getInstance();
-		injector.registerSupplier(InjectionApplication.class, Suppliers.of(this));
-	}
+    private InjectionContainer injector;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		injector.inject(this);
-	}
+    public InjectionApplication() {
+        injector = InjectionContainer.getInstance();
+        injector.registerSupplier(InjectionApplication.class, Suppliers.of(this));
+    }
 
-	public InjectionContainer getInjector() {
-		return injector;
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        injector.inject(this);
+    }
+
+    public InjectionContainer getInjector() {
+        return injector;
+    }
 }

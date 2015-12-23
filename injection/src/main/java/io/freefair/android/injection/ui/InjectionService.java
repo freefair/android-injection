@@ -1,29 +1,32 @@
 package io.freefair.android.injection.ui;
 
 import android.app.Service;
-import android.content.Intent;
 
-import io.freefair.android.injection.InjectionContainer;
 import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.InjectorProvider;
+import io.freefair.android.injection.platform.ServiceInjector;
 
 /**
  * A {@link Service} with support for dependency injection
  */
 public abstract class InjectionService extends Service implements InjectorProvider {
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+    private ServiceInjector injector;
 
-		Injector injector = getInjector();
-		if(injector != null)
-			injector.inject(this);
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-		return super.onStartCommand(intent, flags, startId);
-	}
+        Injector parentInjector = null;
+        if (getApplication() instanceof InjectionApplication) {
+            parentInjector = ((InjectionApplication) getApplication()).getInjector();
+        }
+        injector = new ServiceInjector(parentInjector, this);
+        injector.inject(this);
+    }
 
-	@Override
-	public Injector getInjector() {
-		return InjectionContainer.getInstance();
-	}
+    @Override
+    public Injector getInjector() {
+        return injector;
+    }
 }

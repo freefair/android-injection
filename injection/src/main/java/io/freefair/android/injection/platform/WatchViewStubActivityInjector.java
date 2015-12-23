@@ -13,7 +13,7 @@ import io.freefair.android.injection.helper.RClassHelper;
 /**
  * @author Dennis Fricke
  */
-public class WatchViewStubActivityInjector extends AndroidInjector<Activity> {
+public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity> {
 
 	private final WatchViewStub stub;
 
