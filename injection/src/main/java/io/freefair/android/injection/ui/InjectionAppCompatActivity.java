@@ -18,6 +18,7 @@ import io.freefair.android.util.function.Optional;
 /**
  * An {@link AppCompatActivity} with support for dependency injection
  */
+@SuppressWarnings("unused")
 public class InjectionAppCompatActivity extends AppCompatActivity implements InjectorProvider {
 
     private ActivityInjector injector;

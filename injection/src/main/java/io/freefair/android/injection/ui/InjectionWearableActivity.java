@@ -13,6 +13,7 @@ import io.freefair.android.injection.platform.WatchViewStubActivityInjector;
 /**
  * @author Dennis Fricke
  */
+@SuppressWarnings("unused")
 public abstract class InjectionWearableActivity extends Activity implements InjectorProvider {
     WatchViewStubActivityInjector injector;
 
