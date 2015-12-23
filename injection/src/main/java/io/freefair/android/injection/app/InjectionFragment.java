@@ -1,4 +1,4 @@
-package io.freefair.android.injection.ui;
+package io.freefair.android.injection.app;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
