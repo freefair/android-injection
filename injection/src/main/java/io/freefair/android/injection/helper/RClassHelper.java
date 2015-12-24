@@ -15,7 +15,7 @@ public class RClassHelper {
 	protected static Logger log = AndroidLogger.forClass(RClassHelper.class);
 
 	@Nullable
-	static Class<?> getRClassFromAnnotation(Object object) {
+	static Class<?> fromAnnotation(Object object) {
 		if (object.getClass().isAnnotationPresent(RClass.class)) {
 			Class<?> rClass = object.getClass().getAnnotation(RClass.class).value();
 			String rClassName = rClass.getSimpleName();
@@ -28,42 +28,42 @@ public class RClassHelper {
 	}
 
 	@Nullable
-	public static Class<?> getRClassFromFragment(Fragment fragment) {
-		Class<?> rClass = getRClassFromAnnotation(fragment);
+	public static Class<?> fromFragment(Fragment fragment) {
+		Class<?> rClass = fromAnnotation(fragment);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromActivity(fragment.getActivity());
+		return fromActivity(fragment.getActivity());
 	}
 
 	@Nullable
-	public static Class<?> getRClassFromActivity(Activity activity) {
-		Class<?> rClass = getRClassFromAnnotation(activity);
+	public static Class<?> fromActivity(Activity activity) {
+		Class<?> rClass = fromAnnotation(activity);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromApplication(activity.getApplication());
+		return fromApplication(activity.getApplication());
 	}
 
 	@Nullable
-	public static Class<?> getRClassFromService(Service service){
-		Class<?> rClassFromAnnotation = getRClassFromAnnotation(service);
+	public static Class<?> fromService(Service service){
+		Class<?> rClassFromAnnotation = fromAnnotation(service);
 		if(rClassFromAnnotation != null)
 			return rClassFromAnnotation;
-		return getRClassFromApplication(service.getApplication());
+		return fromApplication(service.getApplication());
 	}
 
 	@Nullable
-	private static Class<?> getRClassFromApplication(Application application) {
-		Class<?> rClass = getRClassFromAnnotation(application);
+	private static Class<?> fromApplication(Application application) {
+		Class<?> rClass = fromAnnotation(application);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromPackageName(application.getPackageName());
+		return fromPackageName(application.getPackageName());
 	}
 
 	@Nullable
-	static Class<?> getRClassFromPackageName(String packageName) {
+	static Class<?> fromPackageName(String packageName) {
 		String rClassName = packageName + ".R";
 		try {
 			return Class.forName(rClassName);
@@ -74,11 +74,11 @@ public class RClassHelper {
 	}
 
 	@Nullable
-	public static Class<?> getRClassFromViewGroup(ViewGroup object) {
-		Class<?> rClass = getRClassFromAnnotation(object);
+	public static Class<?> fromViewGroup(ViewGroup object) {
+		Class<?> rClass = fromAnnotation(object);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromActivity((Activity) object.getContext());
+		return fromActivity((Activity) object.getContext());
 	}
 }

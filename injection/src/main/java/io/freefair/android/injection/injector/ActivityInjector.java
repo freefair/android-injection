@@ -11,7 +11,7 @@ import io.freefair.android.injection.helper.RClassHelper;
 public class ActivityInjector extends AndroidViewInjector<Activity> {
 
 	public ActivityInjector(Activity activity){
-		super(null, activity, RClassHelper.getRClassFromActivity(activity));
+		super(null, activity, RClassHelper.fromActivity(activity));
 	}
 
 	@Override

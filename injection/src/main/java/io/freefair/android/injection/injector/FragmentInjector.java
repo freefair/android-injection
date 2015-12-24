@@ -9,7 +9,7 @@ import io.freefair.android.injection.helper.RClassHelper;
 public class FragmentInjector extends AndroidViewInjector<Fragment> {
 
 	public FragmentInjector(Fragment fragment, Injector parentInjector){
-		super(parentInjector, fragment, RClassHelper.getRClassFromFragment(fragment));
+		super(parentInjector, fragment, RClassHelper.fromFragment(fragment));
 	}
 
 	@Override

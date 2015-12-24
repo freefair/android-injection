@@ -17,7 +17,7 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
 	private final WatchViewStub stub;
 
 	public WatchViewStubActivityInjector(Activity activity, WatchViewStub stub, Injector parentInjector) {
-		super(parentInjector, activity, RClassHelper.getRClassFromActivity(activity));
+		super(parentInjector, activity, RClassHelper.fromActivity(activity));
 		this.stub = stub;
 	}
 
