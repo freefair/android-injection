@@ -1,7 +1,8 @@
-package io.freefair.android.injection;
+package io.freefair.android.injection.injector;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ public abstract class Injector {
 		topClasses.add(Activity.class);
 		topClasses.add(Fragment.class);
 		topClasses.add(Application.class);
+		topClasses.add(Service.class);
 	}
 
 	private WeakHashMap<Object, Class<?>> alreadyInjectedInstances = new WeakHashMap<>();

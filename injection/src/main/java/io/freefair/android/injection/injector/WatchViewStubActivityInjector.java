@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,18 +7,17 @@ import android.support.annotation.NonNull;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
 /**
  * @author Dennis Fricke
  */
-public class WatchViewStubActivityInjector extends AndroidInjector<Activity> {
+public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity> {
 
 	private final WatchViewStub stub;
 
 	public WatchViewStubActivityInjector(Activity activity, WatchViewStub stub, Injector parentInjector) {
-		super(parentInjector, activity, RClassHelper.getRClassFromActivity(activity));
+		super(parentInjector, activity, RClassHelper.fromActivity(activity));
 		this.stub = stub;
 	}
 

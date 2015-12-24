@@ -2,9 +2,7 @@ package io.freefair.android.injection.modules.realm;
 
 import android.content.Context;
 
-import io.freefair.android.injection.InjectionProvider;
-import io.freefair.android.injection.Injector;
-import io.freefair.android.util.logging.AndroidLogger;
+import io.freefair.android.injection.injector.Injector;
 import io.realm.Realm;
 
 public class ContextRealmProvider extends BaseRealmProvider {

@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.app.Activity;
 import android.content.res.Resources;
@@ -6,13 +6,12 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.helper.RClassHelper;
 
-public class ActivityInjector extends AndroidInjector<Activity> {
+public class ActivityInjector extends AndroidViewInjector<Activity> {
 
 	public ActivityInjector(Activity activity){
-		super(null, activity, RClassHelper.getRClassFromActivity(activity));
+		super(null, activity, RClassHelper.fromActivity(activity));
 	}
 
 	@Override

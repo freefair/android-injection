@@ -1,4 +1,4 @@
-package io.freefair.android.injection.platform;
+package io.freefair.android.injection.injector;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -8,37 +8,31 @@ import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.util.TypedValue;
-import android.view.View;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
-import io.freefair.android.injection.InjectionContainer;
-import io.freefair.android.injection.Injector;
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
-import io.freefair.android.injection.annotation.InjectView;
 import io.freefair.android.injection.exceptions.InjectionException;
-import io.freefair.android.injection.exceptions.ViewIdNotFoundException;
+import io.freefair.android.injection.helper.Bindings;
 import io.freefair.android.injection.reflection.Reflection;
-import io.freefair.android.util.logging.*;
 import io.freefair.android.util.function.Optional;
+import io.freefair.android.util.logging.AndroidLogger;
+import io.freefair.android.util.logging.Logger;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
-public abstract class AndroidInjector<T> extends Injector {
+public class AndroidResourceInjector<T> extends Injector {
 
 	private T object;
 	private Class<?> rClass;
-	private Logger log = AndroidLogger.forClass(AndroidInjector.class);
+	private Logger log = AndroidLogger.forClass(AndroidResourceInjector.class);
 
-	public AndroidInjector(Injector parentInjector, T object, Class<?> rClass) {
+	public AndroidResourceInjector(Injector parentInjector, T object, Class<?> rClass) {
 		super(parentInjector == null ? InjectionContainer.getInstance() : parentInjector);
 		this.setObject(object);
 		this.rClass = rClass;
@@ -78,24 +72,14 @@ public abstract class AndroidInjector<T> extends Injector {
 
 	@Override
 	protected void inject(@NonNull Object instance, @NonNull Field field) {
-		if (field.isAnnotationPresent(InjectView.class)) {
-			getBinding().views.put(field, findViewId(field));
-		} else if (field.isAnnotationPresent(InjectResource.class)) {
-			getBinding().resources.put(field, field.getAnnotation(InjectResource.class));
+		if (field.isAnnotationPresent(InjectResource.class)) {
+            Bindings.getResourceBinding(getObjectClass()).put(field, field.getAnnotation(InjectResource.class));
 		} else if (field.isAnnotationPresent(InjectAttribute.class)) {
-			getBinding().attributes.put(field, field.getAnnotation(InjectAttribute.class));
+			Bindings.getAttributeBinding(getObjectClass()).put(field, field.getAnnotation(InjectAttribute.class));
 		} else {
 			super.inject(instance, field);
 		}
 	}
-
-	public void injectViews() {
-		for (Map.Entry<Field, Integer> viewBinding : getBinding().views.entrySet()) {
-			View view = findViewById(viewBinding.getValue());
-			inject(viewBinding.getKey(), view);
-		}
-	}
-
 
 	protected void inject(Field field, Object value) {
 		inject(getObject(), field, value);
@@ -103,10 +87,11 @@ public abstract class AndroidInjector<T> extends Injector {
 
 	public void injectAttributes() {
 
-		int[] attrIds = new int[getBinding().attributes.size()];
+        Map<Field, InjectAttribute> attributeBinding = Bindings.getAttributeBinding(getObjectClass());
+        int[] attrIds = new int[attributeBinding.size()];
 
 		int i = 0;
-		for (Map.Entry<Field, InjectAttribute> entry : getBinding().attributes.entrySet()) {
+		for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
 			InjectAttribute annotation = entry.getValue();
 			attrIds[i] = annotation.id();
 
@@ -120,7 +105,7 @@ public abstract class AndroidInjector<T> extends Injector {
 		TypedArray typedArray = resolveValue(Resources.Theme.class, getObject()).obtainStyledAttributes(attrIds);
 
 		int index = 0;
-		for (Map.Entry<Field, InjectAttribute> entry : getBinding().attributes.entrySet()) {
+		for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
 
 			Field field = entry.getKey();
 			field.setAccessible(true);
@@ -218,7 +203,7 @@ public abstract class AndroidInjector<T> extends Injector {
 		if (resources == null)
 			throw new InjectionException("Resources.class not found");
 
-		for (Map.Entry<Field, InjectResource> resourceBinding : getBinding().resources.entrySet()) {
+		for (Map.Entry<Field, InjectResource> resourceBinding : Bindings.getResourceBinding(getObjectClass()).entrySet()) {
 			Field field = resourceBinding.getKey();
 			InjectResource annotation = resourceBinding.getValue();
 			int resourceId = annotation.id();
@@ -341,54 +326,6 @@ public abstract class AndroidInjector<T> extends Injector {
 			return (T) resolveValue(Context.class, instance).getResources();
 
 		return super.resolveValue(type, instance);
-	}
-
-	protected abstract View findViewById(@IdRes int viewId);
-
-	@IdRes
-	protected int findViewId(Field field) throws ViewIdNotFoundException {
-
-		if (field.isAnnotationPresent(InjectView.class)) {
-			InjectView injectViewAnnotation = field.getAnnotation(InjectView.class);
-			if (injectViewAnnotation.value() != InjectView.DEFAULT_ID) {
-				return injectViewAnnotation.value();
-			}
-		}
-
-		String fieldName = field.getName();
-		if (isRAvailable()) {
-			try {
-				return getRid().getDeclaredField(fieldName).getInt(null);
-			} catch (NoSuchFieldException e) {
-				log.info("Field " + fieldName + " not found in R class");
-			} catch (IllegalAccessException e) { //that should never happen
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		}
-
-		throw new ViewIdNotFoundException(fieldName);
-	}
-
-	private Binding getBinding() {
-		if (bindings.get(getObjectClass()) == null) {
-			bindings.put(getObjectClass(), new Binding());
-		}
-		return bindings.get(getObjectClass());
-	}
-
-	private static WeakHashMap<Class<?>, Binding> bindings = new WeakHashMap<>();
-
-	public static class Binding {
-		Map<Field, Integer> views;
-		Map<Field, InjectAttribute> attributes;
-		Map<Field, InjectResource> resources;
-
-		Binding() {
-			views = new HashMap<>();
-			attributes = new HashMap<>();
-			resources = new HashMap<>();
-		}
 	}
 
 }

@@ -2,6 +2,8 @@ package io.freefair.android.injection.helper;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Service;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.ViewGroup;
 
@@ -12,44 +14,56 @@ public class RClassHelper {
 
 	protected static Logger log = AndroidLogger.forClass(RClassHelper.class);
 
-	static Class<?> getRClassFromAnnotation(Object object) {
+	@Nullable
+	static Class<?> fromAnnotation(Object object) {
 		if (object.getClass().isAnnotationPresent(RClass.class)) {
 			Class<?> rClass = object.getClass().getAnnotation(RClass.class).value();
 			String rClassName = rClass.getSimpleName();
-			if (rClassName.equals("R")) {
-				return rClass;
-			} else {
-				log.error("The name of the class given via @RClass should be 'R', but was '" + rClassName + "'");
+			if (!rClassName.equals("R")) {
+				log.warn("The name of the class given via @RClass should be 'R', but was '" + rClassName + "'");
 			}
+			return rClass;
 		}
 		return null;
 	}
 
-	public static Class<?> getRClassFromFragment(Fragment fragment) {
-		Class<?> rClass = getRClassFromAnnotation(fragment);
+	@Nullable
+	public static Class<?> fromFragment(Fragment fragment) {
+		Class<?> rClass = fromAnnotation(fragment);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromActivity(fragment.getActivity());
+		return fromActivity(fragment.getActivity());
 	}
 
-	public static Class<?> getRClassFromActivity(Activity activity) {
-		Class<?> rClass = getRClassFromAnnotation(activity);
+	@Nullable
+	public static Class<?> fromActivity(Activity activity) {
+		Class<?> rClass = fromAnnotation(activity);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromApplication(activity.getApplication());
+		return fromApplication(activity.getApplication());
 	}
 
-	private static Class<?> getRClassFromApplication(Application application) {
-		Class<?> rClass = getRClassFromAnnotation(application);
+	@Nullable
+	public static Class<?> fromService(Service service){
+		Class<?> rClassFromAnnotation = fromAnnotation(service);
+		if(rClassFromAnnotation != null)
+			return rClassFromAnnotation;
+		return fromApplication(service.getApplication());
+	}
+
+	@Nullable
+	private static Class<?> fromApplication(Application application) {
+		Class<?> rClass = fromAnnotation(application);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromPackageName(application.getPackageName());
+		return fromPackageName(application.getPackageName());
 	}
 
-	static Class<?> getRClassFromPackageName(String packageName) {
+	@Nullable
+	static Class<?> fromPackageName(String packageName) {
 		String rClassName = packageName + ".R";
 		try {
 			return Class.forName(rClassName);
@@ -59,11 +73,12 @@ public class RClassHelper {
 		return null;
 	}
 
-	public static Class<?> getRClassFromViewGroup(ViewGroup object) {
-		Class<?> rClass = getRClassFromAnnotation(object);
+	@Nullable
+	public static Class<?> fromViewGroup(ViewGroup object) {
+		Class<?> rClass = fromAnnotation(object);
 		if (rClass != null) {
 			return rClass;
 		}
-		return getRClassFromActivity((Activity) object.getContext());
+		return fromActivity((Activity) object.getContext());
 	}
 }

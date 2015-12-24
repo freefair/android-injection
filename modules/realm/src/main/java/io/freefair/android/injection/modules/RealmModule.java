@@ -3,7 +3,7 @@ package io.freefair.android.injection.modules;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import io.freefair.android.injection.InjectionContainer;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
 import io.freefair.android.injection.modules.realm.ContextRealmProvider;
 import io.freefair.android.injection.modules.realm.CustomConfigurationRealmProvider;

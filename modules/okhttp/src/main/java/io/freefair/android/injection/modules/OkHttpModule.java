@@ -8,7 +8,7 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 
-import io.freefair.android.injection.InjectionContainer;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
 import io.freefair.android.util.function.Consumer;
 import io.freefair.android.util.function.Supplier;

@@ -1,4 +1,4 @@
-package io.freefair.android.injection;
+package io.freefair.android.injection.injector;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,10 +10,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.freefair.android.util.function.Supplier;
-import io.freefair.android.util.function.Optional;
+import io.freefair.android.injection.InjectionProvider;
 import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.exceptions.InjectionException;
+import io.freefair.android.util.function.Optional;
+import io.freefair.android.util.function.Supplier;
 
 public class InjectionContainer extends Injector {
 
@@ -22,7 +23,6 @@ public class InjectionContainer extends Injector {
 	public static InjectionContainer getInstance() {
 		if (instance == null) {
 			instance = new InjectionContainer();
-			new DefaultModule().configure(instance);
 		}
 		return instance;
 	}
@@ -36,14 +36,17 @@ public class InjectionContainer extends Injector {
 		injectionFactories = new HashSet<>();
 	}
 
+	@SuppressWarnings("unused")
 	public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
 		this.registerProvider(new TypeRegistration<>(impl, iFace));
 	}
 
+	@SuppressWarnings("unused")
 	public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
 		injectionSupplier.put(type, supplier);
 	}
 
+	@SuppressWarnings("unused")
 	public void registerProvider(InjectionProvider injectionProvider) {
 		injectionFactories.add(injectionProvider);
 	}
@@ -124,4 +127,26 @@ public class InjectionContainer extends Injector {
 		}
 		return Optional.empty();
 	}
+
+	public static class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionProvider {
+
+        private final Class<IMPL> implClass;
+        private final Class<IFACE> iFace;
+
+        public TypeRegistration(Class<IMPL> implClass, Class<IFACE> iFace){
+            this.implClass = implClass;
+            this.iFace = iFace;
+        }
+
+        @Override
+        public boolean canProvide(Class<?> clazz) {
+            return clazz.isAssignableFrom(iFace);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
+            return (T) injector.resolveValue(implClass, instance);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package io.freefair.android.injection.modules.realm;
 
-import io.freefair.android.injection.Injector;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.util.function.Supplier;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
