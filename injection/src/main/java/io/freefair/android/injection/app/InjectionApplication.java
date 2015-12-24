@@ -2,6 +2,7 @@ package io.freefair.android.injection.app;
 
 import android.app.Application;
 
+import io.freefair.android.injection.InjectionModule;
 import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectorProvider;
 import io.freefair.android.util.function.Suppliers;
@@ -12,10 +13,9 @@ import io.freefair.android.util.function.Suppliers;
 @SuppressWarnings("unused")
 public class InjectionApplication extends Application implements InjectorProvider {
 
-    private InjectionContainer injector;
+    private InjectionContainer injector = InjectionContainer.getInstance();
 
     public InjectionApplication() {
-        injector = InjectionContainer.getInstance();
         injector.registerSupplier(InjectionApplication.class, Suppliers.of(this));
     }
 
@@ -27,5 +27,9 @@ public class InjectionApplication extends Application implements InjectorProvide
 
     public InjectionContainer getInjector() {
         return injector;
+    }
+
+    public void addModule(InjectionModule injectionModule) {
+        injectionModule.configure(getInjector());
     }
 }

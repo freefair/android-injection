@@ -10,6 +10,9 @@ import java.util.WeakHashMap;
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 
+/**
+ * Storage for Bindings between Fields and {@link android.view.View Views}, Fields and Attributes and Fields and Resources
+ */
 public class Bindings {
 
     private static WeakHashMap<Class<?>, Map<Field, InjectAttribute>> attributeBindings = new WeakHashMap<>();
