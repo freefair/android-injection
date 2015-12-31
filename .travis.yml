@@ -17,5 +17,6 @@ android:
   - android-23
   - extra-android-m2repository
   - extra-google-m2repository
+
 install: "./gradlew assemble"
 script: "./gradlew check"

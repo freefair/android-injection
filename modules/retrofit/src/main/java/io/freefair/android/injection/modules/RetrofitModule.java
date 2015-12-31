@@ -2,51 +2,44 @@ package io.freefair.android.injection.modules;
 
 import android.support.annotation.Nullable;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.modules.retrofit.ServiceProvider;
 import io.freefair.android.util.function.Consumer;
 import io.freefair.android.util.function.Predicate;
 import io.freefair.android.util.function.Supplier;
 import io.freefair.android.util.function.Suppliers;
-import retrofit.Retrofit;
+import retrofit.RestAdapter;
 
 /**
- * An {@link InjectionModule} which enables the injection of {@link Retrofit the retrofit instance}
+ * An {@link InjectionModule} which enables the injection of {@link RestAdapter the retrofit instance}
  * and Services.
  */
 @SuppressWarnings("unused")
 public class RetrofitModule implements InjectionModule {
 
-    private Consumer<Retrofit.Builder> configurator;
+    private Consumer<RestAdapter.Builder> configurator;
     private Predicate<Class<?>> servicePredicate;
 
     /**
      * Create a new RetrofitModule
      *
-     * @param configurator     Use this, to configure your retrofit instance (baseUrl etc.)
-     *                         The {@link OkHttpClient client} is already set
+     * @param configurator     Use this, to configure your {@link RestAdapter} instance (baseUrl etc.)
      * @param servicePredicate This one will be used in order to identify services.
      *                         Return true here, if the given interface is a service.
      */
-    public RetrofitModule(Consumer<Retrofit.Builder> configurator, Predicate<Class<?>> servicePredicate) {
+    public RetrofitModule(Consumer<RestAdapter.Builder> configurator, Predicate<Class<?>> servicePredicate) {
         this.configurator = configurator;
         this.servicePredicate = servicePredicate;
     }
 
     @Override
     public void configure(final InjectionContainer injectionContainer) {
-        injectionContainer.registerSupplier(Retrofit.class, Suppliers.cache(new Supplier<Retrofit>() {
+        injectionContainer.registerSupplier(RestAdapter.class, Suppliers.cache(new Supplier<RestAdapter>() {
             @Nullable
             @Override
-            public Retrofit get() {
-                Retrofit.Builder builder = new Retrofit.Builder();
-                OkHttpClient client = injectionContainer.resolveValue(OkHttpClient.class, null);
-                if (client != null) {
-                    builder.client(client);
-                }
+            public RestAdapter get() {
+                RestAdapter.Builder builder = new RestAdapter.Builder();
                 configurator.accept(builder);
                 return builder.build();
             }
