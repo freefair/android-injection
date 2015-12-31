@@ -7,4 +7,5 @@ android:
   - android-23
   - platform-tools
   - extra
-script: "./gradlew build check"
+install: "./gradlew assemble"
+script: "./gradlew check"
