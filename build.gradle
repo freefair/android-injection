@@ -28,6 +28,7 @@ configure(subprojects - project(':modules')) {
 
         defaultConfig {
             minSdkVersion 1
+            targetSdkVersion 21
             versionCode 1
             versionName project.version
         }
