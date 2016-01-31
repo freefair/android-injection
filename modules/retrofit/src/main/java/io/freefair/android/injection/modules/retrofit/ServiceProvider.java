@@ -3,7 +3,7 @@ package io.freefair.android.injection.modules.retrofit;
 import io.freefair.android.injection.InjectionProvider;
 import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.util.function.Predicate;
-import retrofit.Retrofit;
+import retrofit.RestAdapter;
 
 public class ServiceProvider implements InjectionProvider {
 
@@ -21,7 +21,7 @@ public class ServiceProvider implements InjectionProvider {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
-        Retrofit retrofit = injector.resolveValue(Retrofit.class, instance);
-        return (T) retrofit.create(clazz);
+        RestAdapter restAdapter = injector.resolveValue(RestAdapter.class, instance);
+        return (T) restAdapter.create(clazz);
     }
 }
