@@ -38,5 +38,8 @@ The modules enable the injection of certain classes:
 - `retrofit`
   - `retrofit.RestAdapter`
   - all your services
+- `retrofit2`
+  - `retrofit2.Retrofit`
+  - all your services
 - `realm`
   - `io.realm.Realm`
