@@ -1,1 +1,6 @@
-<manifest package="io.freefair.android.injection.modules.okhttp" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.freefair.android.injection.modules.okhttp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
