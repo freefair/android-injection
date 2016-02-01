@@ -1,0 +1,21 @@
+apply plugin: 'com.android.library'
+
+android {
+    defaultConfig {
+        minSdkVersion 10
+        //consumerProguardFiles 'proguard-rules.pro'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    lintOptions {
+        warning 'InvalidPackage' //okio
+    }
+}
+
+dependencies {
+    compile project(':injection')
+    compile 'com.squareup.okhttp3:okhttp:3.0.1'
+    testCompile 'junit:junit:4.12'
+}
