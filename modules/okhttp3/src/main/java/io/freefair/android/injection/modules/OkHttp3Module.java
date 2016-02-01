@@ -18,6 +18,12 @@ public class OkHttp3Module implements InjectionModule {
 
     private Consumer<OkHttpClient.Builder> configurator;
 
+    /**
+     * Create a new {@link OkHttp3Module} with the given configurator
+     *
+     * @param configurator A {@link Consumer} which will get the {@link OkHttpClient.Builder}
+     *                     in order to perform further configuration
+     */
     public OkHttp3Module(Consumer<OkHttpClient.Builder> configurator) {
         this.configurator = configurator;
     }
@@ -35,6 +41,9 @@ public class OkHttp3Module implements InjectionModule {
         }));
     }
 
+    /**
+     * @return An {@link OkHttp3Module} with an empty (default) configuration
+     */
     public static OkHttp3Module withEmptyConfig() {
         return new OkHttp3Module(new Consumer<OkHttpClient.Builder>() {
             @Override
@@ -43,6 +52,13 @@ public class OkHttp3Module implements InjectionModule {
         });
     }
 
+    /**
+     * Create an {@link OkHttp3Module} with an 10MB cache
+     *
+     * @param context Context of the current Application.
+     *                Used for {@link Context#getCacheDir()}
+     * @return An {@link OkHttp3Module} with an 10MB cache
+     */
     public static OkHttp3Module withCache(final Context context) {
         return new OkHttp3Module(new Consumer<OkHttpClient.Builder>() {
             @Override

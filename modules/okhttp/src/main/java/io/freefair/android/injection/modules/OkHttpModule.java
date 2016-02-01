@@ -8,8 +8,8 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 
-import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.util.function.Consumer;
 import io.freefair.android.util.function.Supplier;
 import io.freefair.android.util.function.Suppliers;
@@ -19,7 +19,13 @@ public class OkHttpModule implements InjectionModule {
 
     private Consumer<OkHttpClient> configurator;
 
-    public OkHttpModule(Consumer<OkHttpClient> configurator){
+    /**
+     * Create a new {@link OkHttpModule} with the given configurator
+     *
+     * @param configurator A {@link Consumer} which will get the created {@link OkHttpClient}
+     *                     in order to do further configuration
+     */
+    public OkHttpModule(Consumer<OkHttpClient> configurator) {
         this.configurator = configurator;
     }
 
@@ -36,7 +42,10 @@ public class OkHttpModule implements InjectionModule {
         }));
     }
 
-    public static OkHttpModule withEmptyConfig(){
+    /**
+     * @return An {@link OkHttpModule} with an empty (default) configuration
+     */
+    public static OkHttpModule withEmptyConfig() {
         return new OkHttpModule(new Consumer<OkHttpClient>() {
             @Override
             public void accept(OkHttpClient value) {
@@ -45,7 +54,14 @@ public class OkHttpModule implements InjectionModule {
         });
     }
 
-    public static OkHttpModule withCache(final Context context){
+    /**
+     * Create an {@link OkHttpModule} with an 10MB cache
+     *
+     * @param context Context of the current Application.
+     *                Used for {@link Context#getCacheDir()}
+     * @return An {@link OkHttpModule} with an 10MB cache
+     */
+    public static OkHttpModule withCache(final Context context) {
         return new OkHttpModule(new Consumer<OkHttpClient>() {
             @Override
             public void accept(OkHttpClient value) {
