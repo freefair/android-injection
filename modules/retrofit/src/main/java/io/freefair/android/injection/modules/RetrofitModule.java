@@ -12,7 +12,7 @@ import io.freefair.android.util.function.Suppliers;
 import retrofit.RestAdapter;
 
 /**
- * An {@link InjectionModule} which enables the injection of {@link RestAdapter the retrofit instance}
+ * An {@link InjectionModule} which enables the injection of {@link RestAdapter the RestAdapter instance}
  * and Services.
  */
 @SuppressWarnings("unused")
@@ -22,7 +22,7 @@ public class RetrofitModule implements InjectionModule {
     private Predicate<Class<?>> servicePredicate;
 
     /**
-     * Create a new RetrofitModule
+     * Create a new {@link RetrofitModule}
      *
      * @param configurator     Use this, to configure your {@link RestAdapter} instance (baseUrl etc.)
      * @param servicePredicate This one will be used in order to identify services.

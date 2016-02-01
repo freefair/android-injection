@@ -22,7 +22,7 @@ public class Retrofit2Module implements InjectionModule {
     private Predicate<Class<?>> servicePredicate;
 
     /**
-     * Create a new RetrofitModule
+     * Create a new {@link Retrofit2Module}
      *
      * @param configurator     Use this, to configure your {@link Retrofit} instance (baseUrl etc.)
      * @param servicePredicate This one will be used in order to identify services.
