@@ -16,6 +16,6 @@ android {
 
 dependencies {
     compile project(':injection')
-    compile 'com.squareup.okhttp:okhttp:2.7.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
     testCompile 'junit:junit:4.12'
 }

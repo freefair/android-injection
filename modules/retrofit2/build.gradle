@@ -16,6 +16,6 @@ android {
 
 dependencies {
     compile project(':injection')
-    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     testCompile 'junit:junit:4.12'
 }
