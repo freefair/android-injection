@@ -20,22 +20,22 @@ public class Bindings {
     private static WeakHashMap<Class<?>, Map<Field, Integer>> viewBindings = new WeakHashMap<>();
 
     @NonNull
-    public static Map<Field, InjectAttribute> getAttributeBinding(Class<?> clazz){
-        if(!attributeBindings.containsKey(clazz))
+    public static Map<Field, InjectAttribute> getAttributeBinding(Class<?> clazz) {
+        if (!attributeBindings.containsKey(clazz))
             attributeBindings.put(clazz, new HashMap<Field, InjectAttribute>());
         return attributeBindings.get(clazz);
     }
 
     @NonNull
-    public static Map<Field, InjectResource> getResourceBinding(Class<?> clazz){
-        if(!resourceBindings.containsKey(clazz))
+    public static Map<Field, InjectResource> getResourceBinding(Class<?> clazz) {
+        if (!resourceBindings.containsKey(clazz))
             resourceBindings.put(clazz, new HashMap<Field, InjectResource>());
         return resourceBindings.get(clazz);
     }
 
     @NonNull
-    public static Map<Field, Integer> getViewBinding(Class<?> clazz){
-        if(!viewBindings.containsKey(clazz))
+    public static Map<Field, Integer> getViewBinding(Class<?> clazz) {
+        if (!viewBindings.containsKey(clazz))
             viewBindings.put(clazz, new HashMap<Field, Integer>());
         return viewBindings.get(clazz);
     }

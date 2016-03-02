@@ -2,8 +2,8 @@ package io.freefair.android.injection.app;
 
 import android.app.Service;
 
-import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.injection.InjectorProvider;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.injection.injector.ServiceInjector;
 
 /**

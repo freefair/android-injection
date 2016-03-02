@@ -11,10 +11,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface InjectAttribute {
-	@AttrRes int id();
+    @AttrRes int id();
 
-	/**
-	 * The type of attribute to inject
-	 */
-	AttributeType type();
+    /**
+     * The type of attribute to inject
+     */
+    AttributeType type();
 }

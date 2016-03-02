@@ -3,8 +3,8 @@ package io.freefair.android.injection.app;
 import android.app.Application;
 
 import io.freefair.android.injection.InjectionModule;
-import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectorProvider;
+import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.util.function.Suppliers;
 
 /**

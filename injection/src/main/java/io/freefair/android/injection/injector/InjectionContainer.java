@@ -18,122 +18,122 @@ import io.freefair.android.util.function.Supplier;
 
 public class InjectionContainer extends Injector {
 
-	private static InjectionContainer instance;
+    private static InjectionContainer instance;
 
-	public static InjectionContainer getInstance() {
-		if (instance == null) {
-			instance = new InjectionContainer();
-		}
-		return instance;
-	}
+    public static InjectionContainer getInstance() {
+        if (instance == null) {
+            instance = new InjectionContainer();
+        }
+        return instance;
+    }
 
-	private Map<Class<?>, Supplier<?>> injectionSupplier;
-	private Set<InjectionProvider> injectionFactories;
+    private Map<Class<?>, Supplier<?>> injectionSupplier;
+    private Set<InjectionProvider> injectionFactories;
 
-	private InjectionContainer() {
-		super(null);
-		injectionSupplier = new HashMap<>();
-		injectionFactories = new HashSet<>();
-	}
+    private InjectionContainer() {
+        super(null);
+        injectionSupplier = new HashMap<>();
+        injectionFactories = new HashSet<>();
+    }
 
-	@SuppressWarnings("unused")
-	public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
-		this.registerProvider(new TypeRegistration<>(impl, iFace));
-	}
+    @SuppressWarnings("unused")
+    public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
+        this.registerProvider(new TypeRegistration<>(impl, iFace));
+    }
 
-	@SuppressWarnings("unused")
-	public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
-		injectionSupplier.put(type, supplier);
-	}
+    @SuppressWarnings("unused")
+    public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
+        injectionSupplier.put(type, supplier);
+    }
 
-	@SuppressWarnings("unused")
-	public void registerProvider(InjectionProvider injectionProvider) {
-		injectionFactories.add(injectionProvider);
-	}
+    @SuppressWarnings("unused")
+    public void registerProvider(InjectionProvider injectionProvider) {
+        injectionFactories.add(injectionProvider);
+    }
 
-	@Override
-	protected void inject(@NonNull Object instance, @NonNull Field field) {
-		if (field.isAnnotationPresent(Inject.class)) {
-			Inject injectAnnotation = field.getAnnotation(Inject.class);
+    @Override
+    protected void inject(@NonNull Object instance, @NonNull Field field) {
+        if (field.isAnnotationPresent(Inject.class)) {
+            Inject injectAnnotation = field.getAnnotation(Inject.class);
 
-			Class<?> targetType = injectAnnotation.value().equals(Object.class)
-										  ? resolveTargetType(field)
-										  : injectAnnotation.value();
+            Class<?> targetType = injectAnnotation.value().equals(Object.class)
+                    ? resolveTargetType(field)
+                    : injectAnnotation.value();
 
-			Object value = getInjector(instance).resolveValue(targetType, instance);
+            Object value = getInjector(instance).resolveValue(targetType, instance);
 
-			if (value == null) {
-				if (!injectAnnotation.optional() && !field.getType().equals(Optional.class)) {
-					throw new InjectionException("Unable to resolve value of type " + targetType.toString() + " for Field " + field.toString());
-				}
-			}
+            if (value == null) {
+                if (!injectAnnotation.optional() && !field.getType().equals(Optional.class)) {
+                    throw new InjectionException("Unable to resolve value of type " + targetType.toString() + " for Field " + field.toString());
+                }
+            }
 
-			inject(instance, field, value);
-		} else {
-			super.inject(instance, field);
-		}
-	}
+            inject(instance, field, value);
+        } else {
+            super.inject(instance, field);
+        }
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	@Nullable
-	public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
-		if (type.isAssignableFrom(Injector.class)) {
-			return (T) this;
-		}
+    @Override
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
+        if (type.isAssignableFrom(Injector.class)) {
+            return (T) this;
+        }
 
-		if (type.isAnnotation()) {
-			Class<? extends Annotation> annotationType = (Class<? extends Annotation>) type;
-			return (T) instance.getClass().getAnnotation(annotationType);
-		}
+        if (type.isAnnotation()) {
+            Class<? extends Annotation> annotationType = (Class<? extends Annotation>) type;
+            return (T) instance.getClass().getAnnotation(annotationType);
+        }
 
-		Optional<T> supplierValue = querySupplier(type);
-		if (supplierValue.isPresent())
-			return supplierValue.get();
+        Optional<T> supplierValue = querySupplier(type);
+        if (supplierValue.isPresent())
+            return supplierValue.get();
 
-		Optional<T> factoryValue = queryFactories(type, instance);
-		if (factoryValue.isPresent())
-			return factoryValue.get();
+        Optional<T> factoryValue = queryFactories(type, instance);
+        if (factoryValue.isPresent())
+            return factoryValue.get();
 
-		return super.resolveValue(type, instance);
-	}
+        return super.resolveValue(type, instance);
+    }
 
-	@SuppressWarnings("unchecked")
-	private <T> Optional<T> querySupplier(Class<T> type) {
+    @SuppressWarnings("unchecked")
+    private <T> Optional<T> querySupplier(Class<T> type) {
 
-		Supplier<T> supplier = (Supplier<T>) injectionSupplier.get(type);
+        Supplier<T> supplier = (Supplier<T>) injectionSupplier.get(type);
 
-		if (supplier == null) {
-			for (Map.Entry<Class<?>, Supplier<?>> supplierEntry : injectionSupplier.entrySet()) {
-				if (type.isAssignableFrom(supplierEntry.getKey())) {
-					supplier = (Supplier<T>) supplierEntry.getValue();
-				}
-			}
-		}
+        if (supplier == null) {
+            for (Map.Entry<Class<?>, Supplier<?>> supplierEntry : injectionSupplier.entrySet()) {
+                if (type.isAssignableFrom(supplierEntry.getKey())) {
+                    supplier = (Supplier<T>) supplierEntry.getValue();
+                }
+            }
+        }
 
-		if (supplier != null) {
-			T value = supplier.get();
-			inject(value);
-			return Optional.ofNullable(value);
-		}
-		return Optional.empty();
-	}
+        if (supplier != null) {
+            T value = supplier.get();
+            inject(value);
+            return Optional.ofNullable(value);
+        }
+        return Optional.empty();
+    }
 
-	@SuppressWarnings("unchecked")
-	private <T> Optional<T> queryFactories(Class<T> type, Object instance) {
-		for (InjectionProvider factory : injectionFactories) {
-			if (factory.canProvide(type))
-				return Optional.of(factory.provide(type, instance, this));
-		}
-		return Optional.empty();
-	}
+    @SuppressWarnings("unchecked")
+    private <T> Optional<T> queryFactories(Class<T> type, Object instance) {
+        for (InjectionProvider factory : injectionFactories) {
+            if (factory.canProvide(type))
+                return Optional.of(factory.provide(type, instance, this));
+        }
+        return Optional.empty();
+    }
 
-	public static class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionProvider {
+    public static class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionProvider {
 
         private final Class<IMPL> implClass;
         private final Class<IFACE> iFace;
 
-        public TypeRegistration(Class<IMPL> implClass, Class<IFACE> iFace){
+        public TypeRegistration(Class<IMPL> implClass, Class<IFACE> iFace) {
             this.implClass = implClass;
             this.iFace = iFace;
         }

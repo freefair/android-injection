@@ -13,7 +13,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 public @interface InjectView {
-	@IdRes int value() default DEFAULT_ID;
-
-	int DEFAULT_ID = -1;
+    @IdRes int value();
 }

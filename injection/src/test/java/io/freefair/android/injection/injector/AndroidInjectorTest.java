@@ -5,16 +5,13 @@ import android.content.Context;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-/**
- * Created by larsgrefer on 20.10.15.
- */
 public class AndroidInjectorTest {
 
-	@Test
-	public void typeTest(){
-		assertTrue(Context.class.isAssignableFrom(Activity.class));
-	}
+    @Test
+    public void typeTest() {
+        assertTrue(Context.class.isAssignableFrom(Activity.class));
+    }
 
 }

@@ -10,12 +10,12 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.injection.InjectorProvider;
 import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.FragmentInjector;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.util.function.Optional;
 
 @SuppressWarnings("unused")

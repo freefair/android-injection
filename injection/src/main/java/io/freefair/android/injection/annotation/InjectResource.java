@@ -11,10 +11,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface InjectResource {
-	@AnyRes int id();
+    @AnyRes int id();
 
-	/**
-	 * The type of resource to inject
-	 */
-	ResourceType type();
+    /**
+     * The type of resource to inject
+     */
+    ResourceType type();
 }

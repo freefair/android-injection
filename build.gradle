@@ -6,11 +6,9 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
-        classpath 'io.freefair:gradle-plugins:1.0.1'
+        classpath 'io.freefair:gradle-plugins:2.0.0-beta4'
     }
 }
-
-apply plugin: 'io.freefair.git-version'
 
 allprojects {
     repositories {
@@ -18,14 +16,15 @@ allprojects {
         maven { url "https://jitpack.io" }
     }
     it.group = 'io.freefair'
-    version = rootProject.version
+
+    apply plugin: 'io.freefair.git-version'
 }
 
 def isCi = "true".equals(System.getenv("CI"))
 
 configure(subprojects - project(':modules')) {
     apply plugin: 'com.android.library'
-    apply plugin: 'io.freefair.android-maven-install'
+    apply plugin: 'io.freefair.android-maven-jars'
 
     android {
         compileSdkVersion 23
