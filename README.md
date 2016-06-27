@@ -1,22 +1,8 @@
-# android-injection [![Release](https://jitpack.io/v/io.freefair/android-injection.svg)](https://jitpack.io/#io.freefair/android-injection)
+# android-injection
 
 Dependency Injection for Android
 
-## How to include
-```gradle
-repositories {
-    // ...
-    maven { url "https://jitpack.io" }
-}
-
-dependencies {
-    // Main dependency:
-    compile 'io.freefair.android-injection:injection:<version>'
-    
-    // Helper modules:
-    compile 'io.freefair.android-injection:<module>:<version>'
-}
-```
+## How to include: [![](https://jitpack.io/v/io.freefair/android-injection.svg)](https://jitpack.io/#io.freefair/android-injection)
 
 ## Core features:
 

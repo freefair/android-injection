@@ -16,6 +16,7 @@ android {
 
 dependencies {
     compile project(':injection')
-    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    //noinspection GradleDynamicVersion
+    compile 'com.squareup.okhttp:okhttp:2.+'
     testCompile 'junit:junit:4.12'
 }

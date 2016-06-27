@@ -16,6 +16,7 @@ android {
 
 dependencies {
     compile project(':injection')
-    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    //noinspection GradleDynamicVersion
+    compile 'com.squareup.retrofit:retrofit:1.+'
     testCompile 'junit:junit:4.12'
 }
