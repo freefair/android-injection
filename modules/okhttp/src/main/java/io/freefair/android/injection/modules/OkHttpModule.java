@@ -1,6 +1,7 @@
 package io.freefair.android.injection.modules;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.squareup.okhttp.Cache;
@@ -17,6 +18,7 @@ import io.freefair.android.util.function.Suppliers;
 @SuppressWarnings("unused")
 public class OkHttpModule implements InjectionModule {
 
+    @NonNull
     private Consumer<OkHttpClient> configurator;
 
     /**
@@ -25,7 +27,7 @@ public class OkHttpModule implements InjectionModule {
      * @param configurator A {@link Consumer} which will get the created {@link OkHttpClient}
      *                     in order to do further configuration
      */
-    public OkHttpModule(Consumer<OkHttpClient> configurator) {
+    public OkHttpModule(@NonNull Consumer<OkHttpClient> configurator) {
         this.configurator = configurator;
     }
 
@@ -61,7 +63,7 @@ public class OkHttpModule implements InjectionModule {
      *                Used for {@link Context#getCacheDir()}
      * @return An {@link OkHttpModule} with an 10MB cache
      */
-    public static OkHttpModule withCache(final Context context) {
+    public static OkHttpModule withCache(@NonNull final Context context) {
         return new OkHttpModule(new Consumer<OkHttpClient>() {
             @Override
             public void accept(OkHttpClient value) {

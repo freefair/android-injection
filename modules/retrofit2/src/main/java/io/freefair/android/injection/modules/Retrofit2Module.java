@@ -1,5 +1,6 @@
 package io.freefair.android.injection.modules;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import io.freefair.android.injection.InjectionModule;
@@ -18,7 +19,9 @@ import retrofit2.Retrofit;
 @SuppressWarnings("unused")
 public class Retrofit2Module implements InjectionModule {
 
+    @NonNull
     private Consumer<Retrofit.Builder> configurator;
+    @NonNull
     private Predicate<Class<?>> servicePredicate;
 
     /**
@@ -28,7 +31,10 @@ public class Retrofit2Module implements InjectionModule {
      * @param servicePredicate This one will be used in order to identify services.
      *                         Return true here, if the given interface is a service.
      */
-    public Retrofit2Module(Consumer<Retrofit.Builder> configurator, Predicate<Class<?>> servicePredicate) {
+    public Retrofit2Module(
+            @NonNull Consumer<Retrofit.Builder> configurator,
+            @NonNull Predicate<Class<?>> servicePredicate
+    ) {
         this.configurator = configurator;
         this.servicePredicate = servicePredicate;
     }

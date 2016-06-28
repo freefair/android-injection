@@ -1,5 +1,7 @@
 package io.freefair.android.injection.modules.retrofit;
 
+import android.support.annotation.NonNull;
+
 import io.freefair.android.injection.InjectionProvider;
 import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.util.function.Predicate;
@@ -7,9 +9,10 @@ import retrofit.RestAdapter;
 
 public class ServiceProvider implements InjectionProvider {
 
+    @NonNull
     private Predicate<Class<?>> servicePredicate;
 
-    public ServiceProvider(Predicate<Class<?>> servicePredicate) {
+    public ServiceProvider(@NonNull Predicate<Class<?>> servicePredicate) {
         this.servicePredicate = servicePredicate;
     }
 

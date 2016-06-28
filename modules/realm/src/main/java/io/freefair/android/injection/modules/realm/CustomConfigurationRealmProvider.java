@@ -1,5 +1,7 @@
 package io.freefair.android.injection.modules.realm;
 
+import android.support.annotation.NonNull;
+
 import io.freefair.android.injection.injector.Injector;
 import io.freefair.android.util.function.Supplier;
 import io.realm.Realm;
@@ -7,9 +9,10 @@ import io.realm.RealmConfiguration;
 
 public class CustomConfigurationRealmProvider extends BaseRealmProvider {
 
+    @NonNull
     private Supplier<RealmConfiguration> realmConfiguration;
 
-    public CustomConfigurationRealmProvider(Supplier<RealmConfiguration> realmConfiguration) {
+    public CustomConfigurationRealmProvider(@NonNull Supplier<RealmConfiguration> realmConfiguration) {
         this.realmConfiguration = realmConfiguration;
     }
 

@@ -1,11 +1,9 @@
 package io.freefair.android.injection.modules;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import io.freefair.android.injection.injector.InjectionContainer;
 import io.freefair.android.injection.InjectionModule;
-import io.freefair.android.injection.modules.realm.ContextRealmProvider;
 import io.freefair.android.injection.modules.realm.CustomConfigurationRealmProvider;
 import io.freefair.android.injection.modules.realm.DefaultRealmProvider;
 import io.freefair.android.util.function.Supplier;
@@ -35,26 +33,12 @@ public abstract class RealmModule implements InjectionModule {
     }
 
     /**
-     * @return a {@link RealmModule} which uses {@link Realm#getInstance(Context)}
-     * @see Realm#getInstance(Context)
-     */
-    @NonNull
-    public static RealmModule usingContext() {
-        return new RealmModule() {
-            @Override
-            public void configure(InjectionContainer injectionContainer) {
-                injectionContainer.registerProvider(new ContextRealmProvider());
-            }
-        };
-    }
-
-    /**
      * @param realmConfiguration the {@link RealmConfiguration} to use for creating realms
      * @return a {@link RealmModule} which uses {@link Realm#getInstance(RealmConfiguration)}
      * @see io.realm.Realm#getInstance(RealmConfiguration)
      */
     @NonNull
-    public static RealmModule usingCustomConfiguration(final Supplier<RealmConfiguration> realmConfiguration) {
+    public static RealmModule usingCustomConfiguration(@NonNull final Supplier<RealmConfiguration> realmConfiguration) {
         return new RealmModule() {
             @Override
             public void configure(InjectionContainer injectionContainer) {

@@ -1,6 +1,7 @@
 package io.freefair.android.injection.modules;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import okhttp3.OkHttpClient;
 @SuppressWarnings("unused")
 public class OkHttp3Module implements InjectionModule {
 
+    @NonNull
     private Consumer<OkHttpClient.Builder> configurator;
 
     /**
@@ -24,7 +26,7 @@ public class OkHttp3Module implements InjectionModule {
      * @param configurator A {@link Consumer} which will get the {@link OkHttpClient.Builder}
      *                     in order to perform further configuration
      */
-    public OkHttp3Module(Consumer<OkHttpClient.Builder> configurator) {
+    public OkHttp3Module(@NonNull Consumer<OkHttpClient.Builder> configurator) {
         this.configurator = configurator;
     }
 
@@ -59,7 +61,7 @@ public class OkHttp3Module implements InjectionModule {
      *                Used for {@link Context#getCacheDir()}
      * @return An {@link OkHttp3Module} with an 10MB cache
      */
-    public static OkHttp3Module withCache(final Context context) {
+    public static OkHttp3Module withCache(@NonNull final Context context) {
         return new OkHttp3Module(new Consumer<OkHttpClient.Builder>() {
             @Override
             public void accept(OkHttpClient.Builder okHttpClientBuilder) {
