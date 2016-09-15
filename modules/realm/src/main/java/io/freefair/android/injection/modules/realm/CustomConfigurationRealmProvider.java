@@ -2,8 +2,8 @@ package io.freefair.android.injection.modules.realm;
 
 import android.support.annotation.NonNull;
 
-import io.freefair.android.injection.injector.Injector;
-import io.freefair.android.util.function.Supplier;
+import io.freefair.injection.injector.Injector;
+import io.freefair.util.function.Supplier;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 

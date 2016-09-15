@@ -6,11 +6,11 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 
-import io.freefair.android.injection.InjectionModule;
-import io.freefair.android.injection.injector.InjectionContainer;
-import io.freefair.android.util.function.Consumer;
-import io.freefair.android.util.function.Supplier;
-import io.freefair.android.util.function.Suppliers;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Supplier;
+import io.freefair.util.function.Suppliers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
@@ -31,8 +31,8 @@ public class OkHttp3Module implements InjectionModule {
     }
 
     @Override
-    public void configure(InjectionContainer injectionContainer) {
-        injectionContainer.registerSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
+    public void configure(RuntimeInjector runtimeInjector) {
+        runtimeInjector.registerSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
             @Nullable
             @Override
             public OkHttpClient get() {

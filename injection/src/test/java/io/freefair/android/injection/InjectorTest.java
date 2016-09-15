@@ -3,20 +3,20 @@ package io.freefair.android.injection;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.freefair.android.injection.annotation.Inject;
-import io.freefair.android.injection.injector.InjectionContainer;
-import io.freefair.android.util.function.Suppliers;
+import io.freefair.injection.annotation.Inject;
+import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.util.function.Suppliers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class InjectorTest {
 
-    InjectionContainer injector;
+    RuntimeInjector injector;
 
     @Before
     public void setUp() {
-        injector = InjectionContainer.getInstance();
+        injector = RuntimeInjector.getInstance();
         injector.registerSupplier(String.class, Suppliers.of("FOO"));
     }
 

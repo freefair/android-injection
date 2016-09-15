@@ -1,18 +1,16 @@
-package io.freefair.android.injection.reflection;
+package io.freefair.injection.reflection;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.freefair.android.util.function.Optional;
-import io.freefair.android.util.function.Predicate;
-import io.freefair.android.util.function.Predicates;
-import io.freefair.android.util.logging.AndroidLogger;
-import io.freefair.android.util.logging.Logger;
+import io.freefair.util.function.Optional;
+import io.freefair.util.function.Predicate;
+import io.freefair.util.function.Predicates;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class Reflection {
-
-    private static Logger log = AndroidLogger.forClass(Reflection.class);
 
     public static <T> List<Field> getAllFields(Class<T> clazz) {
         return getAllFields(clazz, Predicates.<Field>alwaysTrue());
@@ -41,9 +39,9 @@ public class Reflection {
         Class<?> currentClass = clazz;
 
         do {
-            log.verbose("Now checking class " + clazz.getName());
+            log.debug("Now checking class {}", clazz.getName());
             for (Field field : currentClass.getDeclaredFields()) {
-                log.verbose("Checking field " + field.getName());
+                log.debug("Checking field {}", field.getName());
                 if (filter.test(field)) {
                     fields.add(field);
                 }

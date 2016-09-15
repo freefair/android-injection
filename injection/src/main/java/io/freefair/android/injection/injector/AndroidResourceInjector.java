@@ -1,6 +1,10 @@
 package io.freefair.android.injection.injector;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Application;
+import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -9,6 +13,8 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
 import java.lang.reflect.Field;
@@ -16,23 +22,34 @@ import java.util.Map;
 
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
-import io.freefair.android.injection.exceptions.InjectionException;
 import io.freefair.android.injection.helper.Bindings;
-import io.freefair.android.util.function.Optional;
-import io.freefair.android.util.logging.AndroidLogger;
-import io.freefair.android.util.logging.Logger;
+import io.freefair.injection.exceptions.InjectionException;
+import io.freefair.injection.injector.Injector;
+import io.freefair.util.function.Optional;
+import lombok.extern.slf4j.Slf4j;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
-public class AndroidResourceInjector<T> extends Injector {
+@Slf4j
+public abstract class AndroidResourceInjector<T> extends Injector {
 
     private T object;
-    private Logger log = AndroidLogger.forClass(AndroidResourceInjector.class);
 
-    public AndroidResourceInjector(Injector parentInjector, T object) {
-        super(parentInjector == null ? InjectionContainer.getInstance() : parentInjector);
+    public AndroidResourceInjector(T object, Object... possibleParents) {
+        super(possibleParents);
         this.setObject(object);
+        getTopClasses().add(Application.class);
+        getTopClasses().add(Fragment.class);
+        try {
+            getTopClasses().add(Class.forName("android.app.Fragment"));
+        } catch (ClassNotFoundException ignored) {
+
+        }
+        getTopClasses().add(IntentService.class);
+        getTopClasses().add(Service.class);
+        getTopClasses().add(AppCompatActivity.class);
+        getTopClasses().add(Activity.class);
     }
 
     protected T getObject() {
@@ -292,16 +309,16 @@ public class AndroidResourceInjector<T> extends Injector {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
+    public <B> B resolveValue(@NonNull Class<B> type, Object instance) {
 
         if (type.isAssignableFrom(getObjectClass()))
-            return (T) getObject();
+            return (B) getObject();
 
         if (type.isAssignableFrom(Resources.Theme.class))
-            return (T) resolveValue(Context.class, instance).getTheme();
+            return (B) resolveValue(Context.class, instance).getTheme();
 
         if (type.isAssignableFrom(Resources.class))
-            return (T) resolveValue(Context.class, instance).getResources();
+            return (B) resolveValue(Context.class, instance).getResources();
 
         return super.resolveValue(type, instance);
     }

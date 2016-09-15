@@ -2,9 +2,9 @@ package io.freefair.android.injection.modules.retrofit2;
 
 import android.support.annotation.NonNull;
 
-import io.freefair.android.injection.InjectionProvider;
-import io.freefair.android.injection.injector.Injector;
-import io.freefair.android.util.function.Predicate;
+import io.freefair.injection.InjectionProvider;
+import io.freefair.injection.injector.Injector;
+import io.freefair.util.function.Predicate;
 import retrofit2.Retrofit;
 
 @SuppressWarnings("unused")

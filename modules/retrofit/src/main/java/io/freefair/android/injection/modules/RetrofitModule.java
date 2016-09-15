@@ -3,13 +3,13 @@ package io.freefair.android.injection.modules;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import io.freefair.android.injection.InjectionModule;
-import io.freefair.android.injection.injector.InjectionContainer;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.injector.RuntimeInjector;
 import io.freefair.android.injection.modules.retrofit.ServiceProvider;
-import io.freefair.android.util.function.Consumer;
-import io.freefair.android.util.function.Predicate;
-import io.freefair.android.util.function.Supplier;
-import io.freefair.android.util.function.Suppliers;
+import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Predicate;
+import io.freefair.util.function.Supplier;
+import io.freefair.util.function.Suppliers;
 import retrofit.RestAdapter;
 
 /**
@@ -37,8 +37,8 @@ public class RetrofitModule implements InjectionModule {
     }
 
     @Override
-    public void configure(final InjectionContainer injectionContainer) {
-        injectionContainer.registerSupplier(RestAdapter.class, Suppliers.cache(new Supplier<RestAdapter>() {
+    public void configure(final RuntimeInjector runtimeInjector) {
+        runtimeInjector.registerSupplier(RestAdapter.class, Suppliers.cache(new Supplier<RestAdapter>() {
             @Nullable
             @Override
             public RestAdapter get() {
@@ -48,6 +48,6 @@ public class RetrofitModule implements InjectionModule {
             }
         }));
 
-        injectionContainer.registerProvider(new ServiceProvider(servicePredicate));
+        runtimeInjector.registerProvider(new ServiceProvider(servicePredicate));
     }
 }

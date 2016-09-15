@@ -1,4 +1,4 @@
-package io.freefair.android.injection.annotation;
+package io.freefair.injection.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

@@ -1,7 +1,7 @@
 package io.freefair.android.injection.modules.logging;
 
-import io.freefair.android.injection.InjectionProvider;
-import io.freefair.android.injection.injector.Injector;
+import io.freefair.injection.InjectionProvider;
+import io.freefair.injection.injector.Injector;
 import io.freefair.android.util.logging.AndroidLogger;
 
 public class AndroidLoggerProvider implements InjectionProvider {

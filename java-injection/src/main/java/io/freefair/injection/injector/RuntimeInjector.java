@@ -1,7 +1,7 @@
-package io.freefair.android.injection.injector;
+package io.freefair.injection.injector;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -10,19 +10,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.freefair.android.injection.InjectionProvider;
-import io.freefair.android.injection.annotation.Inject;
-import io.freefair.android.injection.exceptions.InjectionException;
-import io.freefair.android.util.function.Optional;
-import io.freefair.android.util.function.Supplier;
+import io.freefair.injection.InjectionProvider;
+import io.freefair.injection.annotation.Inject;
+import io.freefair.injection.exceptions.InjectionException;
+import io.freefair.util.function.Optional;
+import io.freefair.util.function.Supplier;
 
-public class InjectionContainer extends Injector {
+public class RuntimeInjector extends Injector {
 
-    private static InjectionContainer instance;
+    private static RuntimeInjector instance;
 
-    public static InjectionContainer getInstance() {
+    public static RuntimeInjector getInstance() {
         if (instance == null) {
-            instance = new InjectionContainer();
+            instance = new RuntimeInjector();
         }
         return instance;
     }
@@ -30,7 +30,7 @@ public class InjectionContainer extends Injector {
     private Map<Class<?>, Supplier<?>> injectionSupplier;
     private Set<InjectionProvider> injectionFactories;
 
-    private InjectionContainer() {
+    private RuntimeInjector() {
         super(null);
         injectionSupplier = new HashMap<>();
         injectionFactories = new HashSet<>();
@@ -52,7 +52,7 @@ public class InjectionContainer extends Injector {
     }
 
     @Override
-    protected void inject(@NonNull Object instance, @NonNull Field field) {
+    protected void inject(@NotNull Object instance, @NotNull Field field) {
         if (field.isAnnotationPresent(Inject.class)) {
             Inject injectAnnotation = field.getAnnotation(Inject.class);
 
@@ -77,7 +77,7 @@ public class InjectionContainer extends Injector {
     @Override
     @SuppressWarnings("unchecked")
     @Nullable
-    public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
+    public <T> T resolveValue(@NotNull Class<T> type, Object instance) {
         if (type.isAssignableFrom(Injector.class)) {
             return (T) this;
         }

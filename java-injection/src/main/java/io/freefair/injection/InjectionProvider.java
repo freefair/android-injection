@@ -1,6 +1,6 @@
-package io.freefair.android.injection;
+package io.freefair.injection;
 
-import io.freefair.android.injection.injector.Injector;
+import io.freefair.injection.injector.Injector;
 
 public interface InjectionProvider {
     boolean canProvide(Class<?> clazz);

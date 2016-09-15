@@ -10,16 +10,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.freefair.android.injection.InjectorProvider;
-import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.FragmentInjector;
-import io.freefair.android.injection.injector.Injector;
-import io.freefair.android.util.function.Optional;
+import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.annotation.Inject;
+import io.freefair.util.function.Optional;
 
 @SuppressWarnings("unused")
-public class InjectionFragment extends Fragment implements InjectorProvider {
+public abstract class InjectionFragment extends Fragment implements InjectorProvider {
 
     private FragmentInjector injector;
 
@@ -32,11 +31,7 @@ public class InjectionFragment extends Fragment implements InjectorProvider {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Injector parentInjector = null;
-        if (getActivity() instanceof InjectorProvider) {
-            parentInjector = ((InjectorProvider) getActivity()).getInjector();
-        }
-        injector = new FragmentInjector(this, parentInjector);
+        injector = new FragmentInjector(this, getActivity(), getActivity().getApplication());
         injector.inject(this);
         if (xmlMenuAnnotation.isPresent()) {
             setHasOptionsMenu(true);
@@ -44,7 +39,6 @@ public class InjectionFragment extends Fragment implements InjectorProvider {
 
         injector.injectResources();
         injector.injectAttributes();
-
     }
 
     @Override

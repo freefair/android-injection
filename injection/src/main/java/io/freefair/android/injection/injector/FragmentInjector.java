@@ -6,8 +6,8 @@ import android.view.View;
 
 public class FragmentInjector extends AndroidViewInjector<Fragment> {
 
-    public FragmentInjector(Fragment fragment, Injector parentInjector) {
-        super(parentInjector, fragment);
+    public FragmentInjector(Fragment fragment, Object... possibleParents) {
+        super(fragment, possibleParents);
     }
 
     @Override

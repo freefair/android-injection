@@ -1,11 +1,7 @@
-package io.freefair.android.injection.injector;
+package io.freefair.injection.injector;
 
-import android.app.Activity;
-import android.app.Application;
-import android.app.Service;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -17,28 +13,30 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import io.freefair.android.injection.annotation.Inject;
-import io.freefair.android.injection.exceptions.InjectionException;
-import io.freefair.android.injection.reflection.Reflection;
-import io.freefair.android.util.function.Optional;
-import io.freefair.android.util.logging.AndroidLogger;
-import io.freefair.android.util.logging.Logger;
+import io.freefair.injection.annotation.Inject;
+import io.freefair.injection.exceptions.InjectionException;
+import io.freefair.injection.reflection.Reflection;
+import io.freefair.util.function.Optional;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import static lombok.AccessLevel.PROTECTED;
 
 /**
  * Abstact implementation of a dependency injector
  */
+@Slf4j
 public abstract class Injector {
 
-    private final Logger log = AndroidLogger.forClass(Injector.class);
     private Optional<Injector> parentInjector;
 
-    public Injector(@Nullable Injector parentInjector) {
-        this.parentInjector = Optional.ofNullable(parentInjector);
+    public Injector(Object... parentInjectors) {
+        if (parentInjectors == null) {
+            this.parentInjector = Optional.empty();
+        } else {
+            this.parentInjector = Optional.of(InjectorUtils.getParentInjector(parentInjectors));
+        }
         topClasses = new HashSet<>();
-        topClasses.add(Activity.class);
-        topClasses.add(Fragment.class);
-        topClasses.add(Application.class);
-        topClasses.add(Service.class);
     }
 
     private WeakHashMap<Object, Class<?>> alreadyInjectedInstances = new WeakHashMap<>();
@@ -56,13 +54,13 @@ public abstract class Injector {
      *
      * @param instance The object to inject into
      */
-    public final void inject(@NonNull Object instance) {
+    public final void inject(@NotNull Object instance) {
         inject(instance, instance.getClass());
     }
 
     Deque<Object> instancesStack = new LinkedList<>();
 
-    public final void inject(@NonNull Object instance, @NonNull Class<?> clazz) {
+    public final void inject(@NotNull Object instance, @NotNull Class<?> clazz) {
         responsibleInjectors.put(instance, this);
         if (!alreadyInjectedInstances.containsKey(instance)) {
             long start = System.currentTimeMillis();
@@ -79,9 +77,10 @@ public abstract class Injector {
         }
     }
 
+    @Getter(PROTECTED)
     private Set<Class<?>> topClasses;
 
-    @NonNull
+    @NotNull
     @SuppressWarnings("unchecked")
     private <X> Class<X> getUpToExcluding(Class<? extends X> clazz) {
         for (Class<?> topClazz : topClasses) {
@@ -97,7 +96,7 @@ public abstract class Injector {
      * @param instance the instance to inject into
      * @param field    the field to inject
      */
-    protected void inject(@NonNull Object instance, @NonNull Field field) {
+    protected void inject(@NotNull Object instance, @NotNull Field field) {
         if (parentInjector.isPresent()) {
             parentInjector.get().inject(instance, field);
         }
@@ -114,7 +113,7 @@ public abstract class Injector {
      * @return The object to use for the given type
      */
     @Nullable
-    public <T> T resolveValue(@NonNull Class<T> type, @Nullable Object instance) {
+    public <T> T resolveValue(@NotNull Class<T> type, @Nullable Object instance) {
         for (Object inst : instancesStack) {
             if (type.isInstance(inst))
                 return (T) inst;
@@ -134,7 +133,7 @@ public abstract class Injector {
 
     @Nullable
     @SuppressWarnings("unchecked")
-    private <T> T createNewInstance(@NonNull Class<T> type, Object instance) {
+    private <T> T createNewInstance(@NotNull Class<T> type, Object instance) {
 
         T newInstance = null;
         try {
@@ -173,8 +172,8 @@ public abstract class Injector {
      *
      * @return The type of the object, which is needed for the given field
      */
-    @NonNull
-    protected Class<?> resolveTargetType(@NonNull Field field) {
+    @NotNull
+    protected Class<?> resolveTargetType(@NotNull Field field) {
         if (field.getType().equals(Optional.class))
             return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 
@@ -194,7 +193,7 @@ public abstract class Injector {
      * @param field    the field to inject into
      * @param value    the value to inject
      */
-    protected void inject(@NonNull Object instance, @NonNull Field field, @Nullable Object value) {
+    protected void inject(@NotNull Object instance, @NotNull Field field, @Nullable Object value) {
         field.setAccessible(true);
 
         if (field.getType().equals(Optional.class))

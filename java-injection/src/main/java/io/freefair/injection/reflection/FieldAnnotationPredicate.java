@@ -1,8 +1,8 @@
-package io.freefair.android.injection.reflection;
+package io.freefair.injection.reflection;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import io.freefair.android.util.function.Predicate;
+import io.freefair.util.function.Predicate;
 
 public class FieldAnnotationPredicate implements Predicate<Field> {
 

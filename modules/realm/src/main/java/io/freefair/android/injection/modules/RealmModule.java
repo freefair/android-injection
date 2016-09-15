@@ -2,11 +2,11 @@ package io.freefair.android.injection.modules;
 
 import android.support.annotation.NonNull;
 
-import io.freefair.android.injection.injector.InjectionContainer;
-import io.freefair.android.injection.InjectionModule;
+import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.InjectionModule;
 import io.freefair.android.injection.modules.realm.CustomConfigurationRealmProvider;
 import io.freefair.android.injection.modules.realm.DefaultRealmProvider;
-import io.freefair.android.util.function.Supplier;
+import io.freefair.util.function.Supplier;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -26,8 +26,8 @@ public abstract class RealmModule implements InjectionModule {
     public static RealmModule usingDefaultConfig() {
         return new RealmModule() {
             @Override
-            public void configure(InjectionContainer injectionContainer) {
-                injectionContainer.registerProvider(new DefaultRealmProvider());
+            public void configure(RuntimeInjector runtimeInjector) {
+                runtimeInjector.registerProvider(new DefaultRealmProvider());
             }
         };
     }
@@ -41,8 +41,8 @@ public abstract class RealmModule implements InjectionModule {
     public static RealmModule usingCustomConfiguration(@NonNull final Supplier<RealmConfiguration> realmConfiguration) {
         return new RealmModule() {
             @Override
-            public void configure(InjectionContainer injectionContainer) {
-                injectionContainer.registerProvider(new CustomConfigurationRealmProvider(realmConfiguration));
+            public void configure(RuntimeInjector runtimeInjector) {
+                runtimeInjector.registerProvider(new CustomConfigurationRealmProvider(realmConfiguration));
             }
         };
     }

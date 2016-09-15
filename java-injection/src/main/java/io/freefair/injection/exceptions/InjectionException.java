@@ -1,4 +1,4 @@
-package io.freefair.android.injection.exceptions;
+package io.freefair.injection.exceptions;
 
 public class InjectionException extends RuntimeException {
     public InjectionException() {

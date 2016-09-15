@@ -9,11 +9,11 @@ import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 
-import io.freefair.android.injection.InjectionModule;
-import io.freefair.android.injection.injector.InjectionContainer;
-import io.freefair.android.util.function.Consumer;
-import io.freefair.android.util.function.Supplier;
-import io.freefair.android.util.function.Suppliers;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Supplier;
+import io.freefair.util.function.Suppliers;
 
 @SuppressWarnings("unused")
 public class OkHttpModule implements InjectionModule {
@@ -32,8 +32,8 @@ public class OkHttpModule implements InjectionModule {
     }
 
     @Override
-    public void configure(InjectionContainer injectionContainer) {
-        injectionContainer.registerSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
+    public void configure(RuntimeInjector runtimeInjector) {
+        runtimeInjector.registerSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
             @Nullable
             @Override
             public OkHttpClient get() {

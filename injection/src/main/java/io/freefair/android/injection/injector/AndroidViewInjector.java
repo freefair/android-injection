@@ -9,15 +9,11 @@ import java.util.Map;
 
 import io.freefair.android.injection.annotation.InjectView;
 import io.freefair.android.injection.helper.Bindings;
-import io.freefair.android.util.logging.AndroidLogger;
-import io.freefair.android.util.logging.Logger;
 
 public abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> {
 
-    private Logger log = AndroidLogger.forObject(this);
-
-    public AndroidViewInjector(Injector parentInjector, T object) {
-        super(parentInjector, object);
+    public AndroidViewInjector(T object, Object... possibleParents) {
+        super(object, possibleParents);
     }
 
     @Override

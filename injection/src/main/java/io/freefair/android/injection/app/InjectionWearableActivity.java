@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 
-import io.freefair.android.injection.InjectorProvider;
-import io.freefair.android.injection.injector.InjectionContainer;
-import io.freefair.android.injection.injector.Injector;
+import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.injector.Injector;
 import io.freefair.android.injection.injector.WatchViewStubActivityInjector;
 
 /**
@@ -21,9 +21,8 @@ public abstract class InjectionWearableActivity extends Activity implements Inje
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        parentInjector = InjectionContainer.getInstance();
+        parentInjector = RuntimeInjector.getInstance();
         parentInjector.inject(this);
-
     }
 
     public void setContentView(int layoutResID, int viewStubID) {

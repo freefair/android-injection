@@ -7,19 +7,19 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.freefair.android.injection.InjectorProvider;
-import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.ActivityInjector;
-import io.freefair.android.util.function.Optional;
+import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.annotation.Inject;
+import io.freefair.util.function.Optional;
 
 
 /**
  * An {@link AppCompatActivity} with support for dependency injection
  */
 @SuppressWarnings("unused")
-public class InjectionAppCompatActivity extends AppCompatActivity implements InjectorProvider {
+public abstract class InjectionAppCompatActivity extends AppCompatActivity implements InjectorProvider {
 
     private ActivityInjector injector;
 
@@ -31,7 +31,8 @@ public class InjectionAppCompatActivity extends AppCompatActivity implements Inj
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        injector = new ActivityInjector(this);
+
+        injector = new ActivityInjector(this, getApplication());
         injector.inject(this);
 
         if (xmlLayoutAnnotation.isPresent()) {

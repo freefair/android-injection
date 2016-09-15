@@ -8,8 +8,8 @@ import android.view.View;
 
 public class ActivityInjector extends AndroidViewInjector<Activity> {
 
-    public ActivityInjector(Activity activity) {
-        super(null, activity);
+    public ActivityInjector(Activity activity, Object... possibleParents) {
+        super(activity, possibleParents);
     }
 
     @Override

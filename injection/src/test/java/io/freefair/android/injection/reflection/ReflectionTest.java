@@ -10,6 +10,8 @@ import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 import io.freefair.android.injection.annotation.InjectView;
 import io.freefair.android.injection.annotation.ResourceType;
+import io.freefair.injection.reflection.FieldAnnotationPredicate;
+import io.freefair.injection.reflection.Reflection;
 
 import static org.junit.Assert.assertEquals;
 
