@@ -20,7 +20,6 @@ import io.freefair.injection.exceptions.InjectionException;
 import io.freefair.injection.reflection.Reflection;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -158,7 +157,7 @@ public abstract class Injector {
         }
     }
 
-    @NonNull
+    @NotNull
     public <V> Optional<V> resolveValue(String key, Class<V> type) {
         if (parentInjector.isPresent())
             return parentInjector.get().resolveValue(key, type);
