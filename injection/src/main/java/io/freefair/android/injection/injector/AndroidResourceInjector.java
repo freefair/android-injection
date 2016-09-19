@@ -18,22 +18,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
-import io.freefair.android.injection.helper.Bindings;
 import io.freefair.injection.exceptions.InjectionException;
 import io.freefair.injection.injector.Injector;
 import io.freefair.util.function.Optional;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
+import static lombok.AccessLevel.PROTECTED;
 
 @Slf4j
 public abstract class AndroidResourceInjector<T> extends Injector {
 
+    @Getter(PROTECTED)
+    @Setter(PROTECTED)
     private T object;
 
     public AndroidResourceInjector(T object, Object... possibleParents) {
@@ -52,69 +58,56 @@ public abstract class AndroidResourceInjector<T> extends Injector {
         getTopClasses().add(Activity.class);
     }
 
-    protected T getObject() {
-        return object;
-    }
-
-    protected void setObject(T object) {
-        this.object = object;
-    }
-
     @SuppressWarnings("unchecked")
-    protected Class<T> getObjectClass() {
-        return (Class<T>) getObject().getClass();
+    protected Class<? extends T> getObjectClass() {
+        return (Class<? extends T>) getObject().getClass();
     }
 
     @Override
-    protected void inject(@NonNull Object instance, @NonNull Field field) {
+    protected void visitField(@NonNull Object instance, @NonNull FieldWrapper field) {
         if (field.isAnnotationPresent(InjectResource.class)) {
             Bindings.getResourceBinding(getObjectClass()).put(field, field.getAnnotation(InjectResource.class));
         } else if (field.isAnnotationPresent(InjectAttribute.class)) {
             Bindings.getAttributeBinding(getObjectClass()).put(field, field.getAnnotation(InjectAttribute.class));
         } else {
-            super.inject(instance, field);
+            super.visitField(instance, field);
         }
-    }
-
-    protected void inject(Field field, Object value) {
-        inject(getObject(), field, value);
     }
 
     public void injectAttributes() {
 
-        Map<Field, InjectAttribute> attributeBinding = Bindings.getAttributeBinding(getObjectClass());
+        Map<FieldWrapper, InjectAttribute> attributeBinding = Bindings.getAttributeBinding(getObjectClass());
         int[] attrIds = new int[attributeBinding.size()];
 
         int i = 0;
-        for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
+        for (Map.Entry<FieldWrapper, InjectAttribute> entry : attributeBinding.entrySet()) {
             InjectAttribute annotation = entry.getValue();
             attrIds[i] = annotation.id();
 
-            Field field = entry.getKey();
+            FieldWrapper field = entry.getKey();
             if (!field.getType().isAssignableFrom(annotation.type().getClazz())) {
-                logFieldTypeMissmatch(field, annotation.type().getClazz());
+                logFieldTypeMissmatch(field.getField(), annotation.type().getClazz());
             }
             i++;
         }
 
-        TypedArray typedArray = resolveValue(Resources.Theme.class, getObject()).obtainStyledAttributes(attrIds);
+        TypedArray typedArray = resolveBean(Resources.Theme.class, getObject()).obtainStyledAttributes(attrIds);
 
         int index = 0;
-        for (Map.Entry<Field, InjectAttribute> entry : attributeBinding.entrySet()) {
+        for (Map.Entry<FieldWrapper, InjectAttribute> entry : attributeBinding.entrySet()) {
 
-            Field field = entry.getKey();
-            field.setAccessible(true);
+            FieldWrapper field = entry.getKey();
             InjectAttribute annotation = entry.getValue();
 
             try {
                 switch (annotation.type()) {
                     case BOOLEAN:
                         boolean aBoolean = typedArray.getBoolean(index, false);
-                        field.setBoolean(object, aBoolean);
+                        field.getField().setBoolean(object, aBoolean);
                         break;
                     case COLOR:
                         int color = typedArray.getColor(index, 0);
-                        field.setInt(object, color);
+                        field.getField().setInt(object, color);
                         break;
                     case COLOR_STATE_LIST:
                         ColorStateList colorStateList = typedArray.getColorStateList(index);
@@ -122,15 +115,15 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case DIMENSION:
                         float dimension = typedArray.getDimension(index, 0f);
-                        field.setFloat(object, dimension);
+                        field.getField().setFloat(object, dimension);
                         break;
                     case DIMENSION_PIXEL_OFFSET:
                         int dimensionPixelOffset = typedArray.getDimensionPixelOffset(index, 0);
-                        field.setInt(object, dimensionPixelOffset);
+                        field.getField().setInt(object, dimensionPixelOffset);
                         break;
                     case DIMENSION_PIXEL_SIZE:
                         int dimensionPixelSize = typedArray.getDimensionPixelSize(index, 0);
-                        field.setInt(object, dimensionPixelSize);
+                        field.getField().setInt(object, dimensionPixelSize);
                         break;
                     case DRAWABLE:
                         Drawable drawable = typedArray.getDrawable(index);
@@ -138,27 +131,27 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case FLOAT:
                         float aFloat = typedArray.getFloat(index, 0f);
-                        field.setFloat(object, aFloat);
+                        field.getField().setFloat(object, aFloat);
                         break;
                     case FRACTION:
                         float fraction = typedArray.getFraction(index, 1, 1, 0f);
-                        field.setFloat(object, fraction);
+                        field.getField().setFloat(object, fraction);
                         break;
                     case INT:
                         int anInt = typedArray.getInt(index, 0);
-                        field.setInt(object, anInt);
+                        field.getField().setInt(object, anInt);
                         break;
                     case INTEGER:
                         int integer = typedArray.getInteger(index, 0);
-                        field.setInt(object, integer);
+                        field.getField().setInt(object, integer);
                         break;
                     case LAYOUT_DIMENSION:
                         int layoutDimension = typedArray.getLayoutDimension(index, 0);
-                        field.setInt(object, layoutDimension);
+                        field.getField().setInt(object, layoutDimension);
                         break;
                     case RESOURCE_ID:
                         int resourceId = typedArray.getResourceId(index, 0);
-                        field.setInt(object, resourceId);
+                        field.getField().setInt(object, resourceId);
                         break;
                     case STRING:
                         String string = typedArray.getString(index);
@@ -173,13 +166,13 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         field.set(object, textArray);
                         break;
                     case TYPED_VALUE:
-                        TypedValue typedValue = Optional.ofNullable((TypedValue) field.get(object))
+                        TypedValue typedValue = Optional.ofNullable((TypedValue) field.getField().get(object))
                                 .orElse(new TypedValue());
                         typedArray.getValue(index, typedValue);
                         field.set(object, typedValue);
                         break;
                     default:
-                        log.error("Unkown resource type at field " + field.getName());
+                        log.error("Unkown resource type at field " + field.getField().getName());
                         break;
                 }
             } catch (IllegalAccessException iae) {
@@ -194,21 +187,20 @@ public abstract class AndroidResourceInjector<T> extends Injector {
     @TargetApi(LOLLIPOP)
     public void injectResources() {
 
-        Resources resources = resolveValue(Resources.class, getObject());
+        Resources resources = resolveBean(Resources.class, getObject());
         if (resources == null)
             throw new InjectionException("Resources.class not found");
 
-        for (Map.Entry<Field, InjectResource> resourceBinding : Bindings.getResourceBinding(getObjectClass()).entrySet()) {
-            Field field = resourceBinding.getKey();
+        for (Map.Entry<FieldWrapper, InjectResource> resourceBinding : Bindings.getResourceBinding(getObjectClass()).entrySet()) {
+            FieldWrapper field = resourceBinding.getKey();
             InjectResource annotation = resourceBinding.getValue();
             int resourceId = annotation.id();
 
             if (!field.getType().isAssignableFrom(annotation.type().getClazz())) {
-                logFieldTypeMissmatch(field, annotation.type().getClazz());
+                logFieldTypeMissmatch(field.getField(), annotation.type().getClazz());
             }
 
             try {
-                field.setAccessible(true);
                 switch (annotation.type()) {
                     case ANIMATION:
                         XmlResourceParser animation = resources.getAnimation(resourceId);
@@ -216,11 +208,11 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case BOOLEAN:
                         boolean aBoolean = resources.getBoolean(resourceId);
-                        field.setBoolean(object, aBoolean);
+                        field.getField().setBoolean(object, aBoolean);
                         break;
                     case COLOR:
                         int color = resources.getColor(resourceId);
-                        field.setInt(object, color);
+                        field.getField().setInt(object, color);
                         break;
                     case COLOR_STATE_LIST:
                         ColorStateList colorStateList = resources.getColorStateList(resourceId);
@@ -228,20 +220,20 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case DIMENSION:
                         float dimension = resources.getDimension(resourceId);
-                        field.setFloat(object, dimension);
+                        field.getField().setFloat(object, dimension);
                         break;
                     case DIMENSION_PIXEL_OFFSET:
                         int dimensionPixelOffset = resources.getDimensionPixelOffset(resourceId);
-                        field.setInt(object, dimensionPixelOffset);
+                        field.getField().setInt(object, dimensionPixelOffset);
                         break;
                     case DIMENSION_PIXEL_SIZE:
                         int dimensionPixelSize = resources.getDimensionPixelSize(resourceId);
-                        field.setInt(object, dimensionPixelSize);
+                        field.getField().setInt(object, dimensionPixelSize);
                         break;
                     case DRAWABLE:
                         Drawable drawable;
                         if (SDK_INT >= LOLLIPOP) {
-                            drawable = resolveValue(Context.class, getObject()).getDrawable(resourceId);
+                            drawable = resolveBean(Context.class, getObject()).getDrawable(resourceId);
                         } else {
                             drawable = resources.getDrawable(resourceId);
                         }
@@ -249,7 +241,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case FRACTION:
                         float fraction = resources.getFraction(resourceId, 1, 1);
-                        field.setFloat(object, fraction);
+                        field.getField().setFloat(object, fraction);
                         break;
                     case INT_ARRAY:
                         int[] intArray = resources.getIntArray(resourceId);
@@ -257,7 +249,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                     case INTEGER:
                         int integer = resources.getInteger(resourceId);
-                        field.setInt(field, integer);
+                        field.getField().setInt(field, integer);
                         break;
                     case LAYOUT:
                         XmlResourceParser layout = resources.getLayout(resourceId);
@@ -284,7 +276,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         field.set(object, textArray);
                         break;
                     case TYPED_VALUE:
-                        TypedValue typedValue = Optional.ofNullable((TypedValue) field.get(object))
+                        TypedValue typedValue = Optional.ofNullable((TypedValue) field.getField().get(object))
                                 .orElse(new TypedValue());
                         resources.getValue(resourceId, typedValue, true);
                         field.set(object, typedValue);
@@ -294,7 +286,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         field.set(object, xml);
                         break;
                     default:
-                        log.error("Unkown resource type at field " + field.getName());
+                        log.error("Unkown resource type at field " + field.getField().getName());
                         break;
                 }
             } catch (IllegalAccessException iae) {
@@ -309,18 +301,56 @@ public abstract class AndroidResourceInjector<T> extends Injector {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <B> B resolveValue(@NonNull Class<B> type, Object instance) {
+    public <B> B resolveBean(@NonNull Class<B> type, Object instance) {
+
+        if (type.equals(Context.class)) {
+            if (Context.class.isAssignableFrom(getObjectClass())) {
+                return (B) ((Context) getObject()).getApplicationContext();
+            }
+        }
 
         if (type.isAssignableFrom(getObjectClass()))
             return (B) getObject();
 
-        if (type.isAssignableFrom(Resources.Theme.class))
-            return (B) resolveValue(Context.class, instance).getTheme();
+        if (type.isAssignableFrom(Resources.Theme.class)) {
+            Context context = getNearestContext(instance);
+            return (B) context.getTheme();
+        }
 
-        if (type.isAssignableFrom(Resources.class))
-            return (B) resolveValue(Context.class, instance).getResources();
+        if (type.isAssignableFrom(Resources.class)) {
+            Context context = getNearestContext(instance);
+            return (B) context.getResources();
+        }
 
-        return super.resolveValue(type, instance);
+        return super.resolveBean(type, instance);
     }
 
+    protected Context getNearestContext(Object instance) {
+        Context context;
+        if (Context.class.isAssignableFrom(getObjectClass())) {
+            context = (Context) getObject();
+        } else {
+            context = resolveBean(Context.class, instance);
+        }
+        return context;
+    }
+
+    static class Bindings {
+        private static WeakHashMap<Class<?>, Map<FieldWrapper, InjectAttribute>> attributeBindings = new WeakHashMap<>();
+        private static WeakHashMap<Class<?>, Map<FieldWrapper, InjectResource>> resourceBindings = new WeakHashMap<>();
+
+        @NonNull
+        static Map<FieldWrapper, InjectAttribute> getAttributeBinding(Class<?> clazz) {
+            if (!attributeBindings.containsKey(clazz))
+                attributeBindings.put(clazz, new HashMap<FieldWrapper, InjectAttribute>());
+            return attributeBindings.get(clazz);
+        }
+
+        @NonNull
+        static Map<FieldWrapper, InjectResource> getResourceBinding(Class<?> clazz) {
+            if (!resourceBindings.containsKey(clazz))
+                resourceBindings.put(clazz, new HashMap<FieldWrapper, InjectResource>());
+            return resourceBindings.get(clazz);
+        }
+    }
 }

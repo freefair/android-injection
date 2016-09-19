@@ -1,4 +1,4 @@
-package io.freefair.injection;
+package io.freefair.injection.provider;
 
 import io.freefair.injection.injector.Injector;
 

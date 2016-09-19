@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 import io.freefair.injection.injector.RuntimeInjector;
 import io.freefair.injection.injector.Injector;
 import io.freefair.android.injection.injector.WatchViewStubActivityInjector;

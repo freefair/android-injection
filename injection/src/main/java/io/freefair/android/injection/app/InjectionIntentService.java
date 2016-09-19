@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.res.Configuration;
 
 import io.freefair.android.injection.injector.IntentServiceInjector;
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 
 public abstract class InjectionIntentService extends IntentService implements InjectorProvider {
 

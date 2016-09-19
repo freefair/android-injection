@@ -1,6 +1,6 @@
 package io.freefair.injection.injector;
 
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 
 public class InjectorUtils {
 

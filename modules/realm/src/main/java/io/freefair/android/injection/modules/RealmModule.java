@@ -2,10 +2,11 @@ package io.freefair.android.injection.modules;
 
 import android.support.annotation.NonNull;
 
-import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.injection.InjectionModule;
 import io.freefair.android.injection.modules.realm.CustomConfigurationRealmProvider;
 import io.freefair.android.injection.modules.realm.DefaultRealmProvider;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.InjectionModuleBase;
+import io.freefair.util.function.Optional;
 import io.freefair.util.function.Supplier;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -16,7 +17,7 @@ import io.realm.RealmConfiguration;
  * @see <a href="https://realm.io/docs/java/latest/">https://realm.io/docs/java/latest/</a>
  */
 @SuppressWarnings("unused")
-public abstract class RealmModule implements InjectionModule {
+public abstract class RealmModule extends InjectionModuleBase {
 
     /**
      * @return a {@link RealmModule} which uses {@link Realm#getDefaultInstance()}
@@ -26,8 +27,8 @@ public abstract class RealmModule implements InjectionModule {
     public static RealmModule usingDefaultConfig() {
         return new RealmModule() {
             @Override
-            public void configure(RuntimeInjector runtimeInjector) {
-                runtimeInjector.registerProvider(new DefaultRealmProvider());
+            public Optional<DefaultRealmProvider> getBeanProvider() {
+                return Optional.of(new DefaultRealmProvider());
             }
         };
     }
@@ -40,9 +41,10 @@ public abstract class RealmModule implements InjectionModule {
     @NonNull
     public static RealmModule usingCustomConfiguration(@NonNull final Supplier<RealmConfiguration> realmConfiguration) {
         return new RealmModule() {
+
             @Override
-            public void configure(RuntimeInjector runtimeInjector) {
-                runtimeInjector.registerProvider(new CustomConfigurationRealmProvider(realmConfiguration));
+            public Optional<CustomConfigurationRealmProvider> getBeanProvider() {
+                return Optional.of(new CustomConfigurationRealmProvider(realmConfiguration));
             }
         };
     }

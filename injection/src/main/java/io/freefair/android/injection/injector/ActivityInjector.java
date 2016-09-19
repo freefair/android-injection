@@ -1,9 +1,8 @@
 package io.freefair.android.injection.injector;
 
 import android.app.Activity;
-import android.content.res.Resources;
+import android.content.Context;
 import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
 import android.view.View;
 
 public class ActivityInjector extends AndroidViewInjector<Activity> {
@@ -13,17 +12,13 @@ public class ActivityInjector extends AndroidViewInjector<Activity> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
-        if (type.isAssignableFrom(Resources.Theme.class)) {
-            return (T) getObject().getTheme();
-        }
-        return super.resolveValue(type, instance);
-    }
-
-    @Override
     protected View findViewById(@IdRes int id) {
         return getObject().findViewById(id);
     }
 
+
+    @Override
+    protected Context getNearestContext(Object instance) {
+        return getObject();
+    }
 }

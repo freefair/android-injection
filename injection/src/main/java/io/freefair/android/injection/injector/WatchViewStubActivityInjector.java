@@ -21,11 +21,11 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T resolveValue(@NonNull Class<T> type, Object instance) {
+    public <T> T resolveBean(@NonNull Class<T> type, Object instance) {
         if (type.isAssignableFrom(Context.class))
             return (T) stub.getContext();
 
-        return super.resolveValue(type, instance);
+        return super.resolveBean(type, instance);
     }
 
     @Override
@@ -33,4 +33,8 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
         return stub.findViewById(id);
     }
 
+    @Override
+    protected Context getNearestContext(Object instance) {
+        return getObject();
+    }
 }

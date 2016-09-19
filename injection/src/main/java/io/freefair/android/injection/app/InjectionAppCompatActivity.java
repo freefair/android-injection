@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.ActivityInjector;
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 import io.freefair.injection.annotation.Inject;
 import io.freefair.util.function.Optional;
 
@@ -21,7 +21,7 @@ import io.freefair.util.function.Optional;
 @SuppressWarnings("unused")
 public abstract class InjectionAppCompatActivity extends AppCompatActivity implements InjectorProvider {
 
-    private ActivityInjector injector;
+    private ActivityInjector activityInjector;
 
     @Inject
     protected Optional<XmlMenu> xmlMenuAnnotation;
@@ -32,48 +32,50 @@ public abstract class InjectionAppCompatActivity extends AppCompatActivity imple
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        injector = new ActivityInjector(this, getApplication());
-        injector.inject(this);
+        activityInjector = new ActivityInjector(this, getApplication());
+        activityInjector.inject(this);
 
         if (xmlLayoutAnnotation.isPresent()) {
             setContentView(xmlLayoutAnnotation.get().value());
         }
 
-        injector.injectResources();
-        injector.injectAttributes();
+        injectAttributesAndResources();
     }
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
-        injector.injectViews();
+        activityInjector.injectViews();
     }
 
     @Override
     public void setContentView(View view) {
         super.setContentView(view);
-        injector.injectViews();
+        activityInjector.injectViews();
     }
 
     @Override
     public void setContentView(View view, ViewGroup.LayoutParams params) {
         super.setContentView(view, params);
-        injector.injectViews();
+        activityInjector.injectViews();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        injector.injectResources();
-        injector.injectAttributes();
+        injectAttributesAndResources();
     }
 
     @Override
     public void setTheme(int resid) {
         super.setTheme(resid);
-        if (injector != null) {
-            injector.injectResources();
-            injector.injectAttributes();
+        injectAttributesAndResources();
+    }
+
+    private void injectAttributesAndResources() {
+        if (activityInjector != null) {
+            activityInjector.injectResources();
+            activityInjector.injectAttributes();
         }
     }
 
@@ -89,6 +91,6 @@ public abstract class InjectionAppCompatActivity extends AppCompatActivity imple
 
     @Override
     public ActivityInjector getInjector() {
-        return injector;
+        return activityInjector;
     }
 }

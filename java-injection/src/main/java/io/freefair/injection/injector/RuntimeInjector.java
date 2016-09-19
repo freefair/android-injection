@@ -4,17 +4,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Properties;
 
-import io.freefair.injection.InjectionProvider;
-import io.freefair.injection.annotation.Inject;
-import io.freefair.injection.exceptions.InjectionException;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.provider.SupplierProvider;
+import io.freefair.injection.provider.TypeRegistration;
+import io.freefair.injection.provider.ValueProvider;
 import io.freefair.util.function.Optional;
 import io.freefair.util.function.Supplier;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RuntimeInjector extends Injector {
 
@@ -27,57 +29,54 @@ public class RuntimeInjector extends Injector {
         return instance;
     }
 
-    private Map<Class<?>, Supplier<?>> injectionSupplier;
-    private Set<InjectionProvider> injectionFactories;
+    @Getter
+    @Setter
+    private Properties properties = new Properties();
+    private Deque<BeanProvider> beanProviders = new ArrayDeque<>();
+    private Deque<ValueProvider> valueProviders = new ArrayDeque<>();
 
     private RuntimeInjector() {
         super(null);
-        injectionSupplier = new HashMap<>();
-        injectionFactories = new HashSet<>();
+
+        valueProviders.addLast(new PropertiesValueProvider());
+        valueProviders.addLast(new SystemPropertiesValueProvider());
+        valueProviders.addLast(new EnvValueProvider());
     }
 
-    @SuppressWarnings("unused")
-    public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
-        this.registerProvider(new TypeRegistration<>(impl, iFace));
-    }
-
-    @SuppressWarnings("unused")
-    public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
-        injectionSupplier.put(type, supplier);
-    }
-
-    @SuppressWarnings("unused")
-    public void registerProvider(InjectionProvider injectionProvider) {
-        injectionFactories.add(injectionProvider);
-    }
-
-    @Override
-    protected void inject(@NotNull Object instance, @NotNull Field field) {
-        if (field.isAnnotationPresent(Inject.class)) {
-            Inject injectAnnotation = field.getAnnotation(Inject.class);
-
-            Class<?> targetType = injectAnnotation.value().equals(Object.class)
-                    ? resolveTargetType(field)
-                    : injectAnnotation.value();
-
-            Object value = getInjector(instance).resolveValue(targetType, instance);
-
-            if (value == null) {
-                if (!injectAnnotation.optional() && !field.getType().equals(Optional.class)) {
-                    throw new InjectionException("Unable to resolve value of type " + targetType.toString() + " for Field " + field.toString());
-                }
-            }
-
-            inject(instance, field, value);
-        } else {
-            super.inject(instance, field);
+    public void registerModule(InjectionModule injectionModule) {
+        Optional<? extends BeanProvider> beanProvider = injectionModule.getBeanProvider();
+        if (beanProvider.isPresent()) {
+            registerBeanProvider(beanProvider.get());
         }
+
+        Optional<? extends ValueProvider> valueProvider = injectionModule.getValueProvider();
+        if (valueProvider.isPresent()) {
+            registerValueProvider(valueProvider.get());
+        }
+    }
+
+    @Deprecated
+    public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
+        this.registerBeanProvider(new TypeRegistration<>(impl, iFace));
+    }
+
+    @Deprecated
+    public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
+        this.registerBeanProvider(new SupplierProvider<>(type, supplier));
+    }
+
+    public void registerBeanProvider(BeanProvider beanProvider) {
+        beanProviders.addFirst(beanProvider);
+    }
+
+    public void registerValueProvider(ValueProvider valueProvider) {
+        valueProviders.addFirst(valueProvider);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     @Nullable
-    public <T> T resolveValue(@NotNull Class<T> type, Object instance) {
+    public <T> T resolveBean(@NotNull Class<T> type, Object instance) {
         if (type.isAssignableFrom(Injector.class)) {
             return (T) this;
         }
@@ -87,66 +86,105 @@ public class RuntimeInjector extends Injector {
             return (T) instance.getClass().getAnnotation(annotationType);
         }
 
-        Optional<T> supplierValue = querySupplier(type);
-        if (supplierValue.isPresent())
-            return supplierValue.get();
-
-        Optional<T> factoryValue = queryFactories(type, instance);
-        if (factoryValue.isPresent())
-            return factoryValue.get();
-
-        return super.resolveValue(type, instance);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Optional<T> querySupplier(Class<T> type) {
-
-        Supplier<T> supplier = (Supplier<T>) injectionSupplier.get(type);
-
-        if (supplier == null) {
-            for (Map.Entry<Class<?>, Supplier<?>> supplierEntry : injectionSupplier.entrySet()) {
-                if (type.isAssignableFrom(supplierEntry.getKey())) {
-                    supplier = (Supplier<T>) supplierEntry.getValue();
-                }
+        T value = null;
+        for (BeanProvider beanProvider : beanProviders) {
+            if (beanProvider.canProvideBean(type)) {
+                value = beanProvider.provideBean(type, instance, this);
+                if (value != null)
+                    break;
             }
         }
 
-        if (supplier != null) {
-            T value = supplier.get();
-            inject(value);
-            return Optional.ofNullable(value);
-        }
-        return Optional.empty();
+        if (value != null)
+            return value;
+
+        return super.resolveBean(type, instance);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Optional<T> queryFactories(Class<T> type, Object instance) {
-        for (InjectionProvider factory : injectionFactories) {
-            if (factory.canProvide(type))
-                return Optional.of(factory.provide(type, instance, this));
+    @Override
+    public <V> Optional<V> resolveValue(String key, Class<V> type) {
+
+        for (ValueProvider valueProvider : valueProviders) {
+            if (valueProvider.canProvideValue(key, type)) {
+                return Optional.of(valueProvider.provideValue(key, type));
+            }
         }
-        return Optional.empty();
+
+        return super.resolveValue(key, type);
     }
 
-    public static class TypeRegistration<IMPL extends IFACE, IFACE> implements InjectionProvider {
-
-        private final Class<IMPL> implClass;
-        private final Class<IFACE> iFace;
-
-        public TypeRegistration(Class<IMPL> implClass, Class<IFACE> iFace) {
-            this.implClass = implClass;
-            this.iFace = iFace;
-        }
+    private class PropertiesValueProvider implements ValueProvider {
 
         @Override
-        public boolean canProvide(Class<?> clazz) {
-            return clazz.isAssignableFrom(iFace);
+        public boolean canProvideValue(String key, Class<?> type) {
+            return properties.containsKey(key) && type.isInstance(properties.get(key));
         }
 
-        @Override
         @SuppressWarnings("unchecked")
-        public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
-            return (T) injector.resolveValue(implClass, instance);
+        @Override
+        public <V> V provideValue(String key, Class<? super V> type) {
+            return (V) properties.get(key);
+        }
+    }
+
+    private static class SystemPropertiesValueProvider implements ValueProvider {
+
+        @Override
+        public boolean canProvideValue(String key, Class<?> type) {
+            if (type.isAssignableFrom(String.class)) {
+                try {
+                    String property = System.getProperty(key);
+                    if (property != null) return true;
+                } catch (SecurityException e) {
+                    return false;
+                }
+            } else {
+                Properties properties;
+                try {
+                    properties = System.getProperties();
+                } catch (SecurityException e) {
+                    return false;
+                }
+                if (properties.containsKey(key)) {
+                    Object property = properties.get(key);
+                    return type.isInstance(property);
+                } else {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <V> V provideValue(String key, Class<? super V> type) {
+            if (type.isAssignableFrom(String.class)) {
+                return (V) System.getProperty(key);
+            } else {
+                return (V) System.getProperties().get(key);
+            }
+        }
+    }
+
+    private static class EnvValueProvider implements ValueProvider {
+        @Override
+        public boolean canProvideValue(String key, Class<?> type) {
+            if (type.isAssignableFrom(String.class)) {
+                try {
+                    return System.getenv(key) != null;
+                } catch (SecurityException e) {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <V> V provideValue(String key, Class<? super V> type) {
+            return (V) System.getenv(key);
         }
     }
 }

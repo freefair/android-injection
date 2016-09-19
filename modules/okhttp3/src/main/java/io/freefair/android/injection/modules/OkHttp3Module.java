@@ -6,16 +6,18 @@ import android.support.annotation.Nullable;
 
 import java.io.File;
 
-import io.freefair.injection.InjectionModule;
-import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.InjectionModuleBase;
+import io.freefair.injection.provider.SupplierProvider;
 import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Optional;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
 @SuppressWarnings("unused")
-public class OkHttp3Module implements InjectionModule {
+public class OkHttp3Module extends InjectionModuleBase {
 
     @NonNull
     private Consumer<OkHttpClient.Builder> configurator;
@@ -31,8 +33,8 @@ public class OkHttp3Module implements InjectionModule {
     }
 
     @Override
-    public void configure(RuntimeInjector runtimeInjector) {
-        runtimeInjector.registerSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
+    public Optional<? extends BeanProvider> getBeanProvider() {
+        SupplierProvider<OkHttpClient> okHttpClientSupplierProvider = new SupplierProvider<>(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
             @Nullable
             @Override
             public OkHttpClient get() {
@@ -41,7 +43,9 @@ public class OkHttp3Module implements InjectionModule {
                 return client.build();
             }
         }));
+        return Optional.of(okHttpClientSupplierProvider);
     }
+
 
     /**
      * @return An {@link OkHttp3Module} with an empty (default) configuration

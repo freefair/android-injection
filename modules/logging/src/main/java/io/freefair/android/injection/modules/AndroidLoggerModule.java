@@ -1,14 +1,30 @@
 package io.freefair.android.injection.modules;
 
-import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.injection.InjectionModule;
-import io.freefair.android.injection.modules.logging.AndroidLoggerProvider;
+import io.freefair.android.util.logging.AndroidLogger;
+import io.freefair.injection.InjectionModuleBase;
+import io.freefair.injection.injector.Injector;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.util.function.Optional;
 
 @SuppressWarnings("unused")
-public class AndroidLoggerModule implements InjectionModule {
+public class AndroidLoggerModule extends InjectionModuleBase {
 
     @Override
-    public void configure(RuntimeInjector runtimeInjector) {
-        runtimeInjector.registerProvider(new AndroidLoggerProvider());
+    public Optional<AndroidLoggerProvider> getBeanProvider() {
+        return Optional.of(new AndroidLoggerProvider());
+    }
+
+    public static class AndroidLoggerProvider implements BeanProvider {
+
+        @Override
+        public boolean canProvideBean(Class<?> type) {
+            return type.isAssignableFrom(AndroidLogger.class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
+            return (T) AndroidLogger.forObject(instance);
+        }
     }
 }

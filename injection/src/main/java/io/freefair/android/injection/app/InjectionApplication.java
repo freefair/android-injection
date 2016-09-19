@@ -1,11 +1,14 @@
 package io.freefair.android.injection.app;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.res.Configuration;
 
 import io.freefair.android.injection.injector.ApplicationInjector;
 import io.freefair.injection.InjectionModule;
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.provider.SupplierProvider;
 import io.freefair.util.function.Suppliers;
 
 /**
@@ -18,7 +21,7 @@ public abstract class InjectionApplication extends Application implements Inject
     private ApplicationInjector applicationInjector;
 
     public InjectionApplication() {
-        runtimeInjector.registerSupplier(InjectionApplication.class, Suppliers.of(this));
+        runtimeInjector.registerBeanProvider(new SupplierProvider<>(Context.class, Suppliers.of(this.getApplicationContext())));
     }
 
     @Override
@@ -28,6 +31,27 @@ public abstract class InjectionApplication extends Application implements Inject
         applicationInjector = new ApplicationInjector(this);
 
         applicationInjector.inject(this);
+        injectAttributesAndResources();
+
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        injectAttributesAndResources();
+    }
+
+    private void injectAttributesAndResources() {
+        if (applicationInjector != null) {
+            applicationInjector.injectResources();
+            applicationInjector.injectAttributes();
+        }
+    }
+
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(resid);
+        injectAttributesAndResources();
     }
 
     public ApplicationInjector getInjector() {
@@ -35,6 +59,6 @@ public abstract class InjectionApplication extends Application implements Inject
     }
 
     public void addModule(InjectionModule injectionModule) {
-        injectionModule.configure(runtimeInjector);
+        runtimeInjector.registerModule(injectionModule);
     }
 }

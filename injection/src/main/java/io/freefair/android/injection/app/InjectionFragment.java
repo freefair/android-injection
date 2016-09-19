@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.FragmentInjector;
-import io.freefair.injection.InjectorProvider;
+import io.freefair.injection.provider.InjectorProvider;
 import io.freefair.injection.annotation.Inject;
 import io.freefair.util.function.Optional;
 
@@ -37,8 +37,7 @@ public abstract class InjectionFragment extends Fragment implements InjectorProv
             setHasOptionsMenu(true);
         }
 
-        injector.injectResources();
-        injector.injectAttributes();
+        injectAttributesAndResources();
     }
 
     @Override
@@ -66,8 +65,14 @@ public abstract class InjectionFragment extends Fragment implements InjectorProv
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        injector.injectResources();
-        injector.injectAttributes();
+        injectAttributesAndResources();
+    }
+
+    private void injectAttributesAndResources() {
+        if (injector != null) {
+            injector.injectResources();
+            injector.injectAttributes();
+        }
     }
 
     @Override

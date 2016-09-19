@@ -3,10 +3,14 @@ package io.freefair.android.injection.modules;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import io.freefair.injection.InjectionModule;
-import io.freefair.injection.injector.RuntimeInjector;
 import io.freefair.android.injection.modules.retrofit2.ServiceProvider;
+import io.freefair.injection.InjectionModule;
+import io.freefair.injection.InjectionModuleBase;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.provider.CombiningBeanProvider;
+import io.freefair.injection.provider.SupplierProvider;
 import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Optional;
 import io.freefair.util.function.Predicate;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
@@ -17,7 +21,7 @@ import retrofit2.Retrofit;
  * and Services.
  */
 @SuppressWarnings("unused")
-public class Retrofit2Module implements InjectionModule {
+public class Retrofit2Module extends InjectionModuleBase {
 
     @NonNull
     private Consumer<Retrofit.Builder> configurator;
@@ -40,8 +44,8 @@ public class Retrofit2Module implements InjectionModule {
     }
 
     @Override
-    public void configure(final RuntimeInjector runtimeInjector) {
-        runtimeInjector.registerSupplier(Retrofit.class, Suppliers.cache(new Supplier<Retrofit>() {
+    public Optional<? extends BeanProvider> getBeanProvider() {
+        SupplierProvider<Retrofit> retrofitProvider = new SupplierProvider<>(Retrofit.class, Suppliers.cache(new Supplier<Retrofit>() {
             @Nullable
             @Override
             public Retrofit get() {
@@ -51,6 +55,9 @@ public class Retrofit2Module implements InjectionModule {
             }
         }));
 
-        runtimeInjector.registerProvider(new ServiceProvider(servicePredicate));
+        ServiceProvider serviceProvider = new ServiceProvider(servicePredicate);
+
+        return Optional.of(new CombiningBeanProvider(retrofitProvider, serviceProvider));
+
     }
 }

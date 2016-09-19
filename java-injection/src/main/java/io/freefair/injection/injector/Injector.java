@@ -3,6 +3,7 @@ package io.freefair.injection.injector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -14,10 +15,13 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import io.freefair.injection.annotation.Inject;
+import io.freefair.injection.annotation.Value;
 import io.freefair.injection.exceptions.InjectionException;
 import io.freefair.injection.reflection.Reflection;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static lombok.AccessLevel.PROTECTED;
@@ -28,7 +32,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Slf4j
 public abstract class Injector {
 
-    private Optional<Injector> parentInjector;
+    private final Optional<Injector> parentInjector;
 
     public Injector(Object... parentInjectors) {
         if (parentInjectors == null) {
@@ -68,7 +72,7 @@ public abstract class Injector {
             instancesStack.addLast(instance);
             alreadyInjectedInstances.put(instance, clazz);
             for (Field field : Reflection.getAllFields(clazz, getUpToExcluding(clazz))) {
-                inject(instance, field);
+                visitField(instance, FieldWrapper.of(field));
             }
             instancesStack.removeLast();
 
@@ -96,9 +100,31 @@ public abstract class Injector {
      * @param instance the instance to inject into
      * @param field    the field to inject
      */
-    protected void inject(@NotNull Object instance, @NotNull Field field) {
+    protected void visitField(@NotNull Object instance, @NotNull FieldWrapper field) {
+        if (field.isAnnotationPresent(Inject.class)) {
+            Inject injectAnnotation = field.getAnnotation(Inject.class);
+
+            Class<?> targetType = injectAnnotation.value().equals(Object.class)
+                    ? field.getType()
+                    : injectAnnotation.value();
+
+            Object bean = getInjector(instance).resolveBean(targetType, instance);
+
+            field.set(instance, bean);
+        }
+
+        if (field.isAnnotationPresent(Value.class)) {
+            Value valueAnnotation = field.getAnnotation(Value.class);
+
+            Class<?> targetType = field.getType();
+
+            Optional<?> value = getInjector(instance).resolveValue(valueAnnotation.value(), targetType);
+
+            field.set(instance, value.orNull());
+        }
+
         if (parentInjector.isPresent()) {
-            parentInjector.get().inject(instance, field);
+            parentInjector.get().visitField(instance, field);
         }
     }
 
@@ -112,15 +138,16 @@ public abstract class Injector {
      * @param <T>      the type of the object to return
      * @return The object to use for the given type
      */
+    @SuppressWarnings("unchecked")
     @Nullable
-    public <T> T resolveValue(@NotNull Class<T> type, @Nullable Object instance) {
+    public <T> T resolveBean(@NotNull Class<T> type, @Nullable Object instance) {
         for (Object inst : instancesStack) {
             if (type.isInstance(inst))
                 return (T) inst;
         }
 
         if (parentInjector.isPresent()) {
-            return parentInjector.get().resolveValue(type, instance);
+            return parentInjector.get().resolveBean(type, instance);
         } else {
             try {
                 return createNewInstance(type, instance);
@@ -129,6 +156,14 @@ public abstract class Injector {
                 return null;
             }
         }
+    }
+
+    @NonNull
+    public <V> Optional<V> resolveValue(String key, Class<V> type) {
+        if (parentInjector.isPresent())
+            return parentInjector.get().resolveValue(key, type);
+        else
+            return Optional.empty();
     }
 
     @Nullable
@@ -147,7 +182,7 @@ public abstract class Injector {
                     Class<?>[] parameterTypes = constructor.getParameterTypes();
                     Object[] parameterValues = new Object[parameterTypes.length];
                     for (int i = 0; i < parameterTypes.length; i++) {
-                        parameterValues[i] = getInjector(instance).resolveValue(parameterTypes[i], null);
+                        parameterValues[i] = getInjector(instance).resolveBean(parameterTypes[i], null);
                     }
 
                     try {
@@ -164,49 +199,82 @@ public abstract class Injector {
         return newInstance;
     }
 
-    /**
-     * resolves the actual type needed for the given field
-     * <p/>
-     * This method looks into {@link Optional}s and {@link WeakReference}s
-     * in order to resolve the real target type
-     *
-     * @return The type of the object, which is needed for the given field
-     */
-    @NotNull
-    protected Class<?> resolveTargetType(@NotNull Field field) {
-        if (field.getType().equals(Optional.class))
-            return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+    protected static class FieldWrapper {
+        private static WeakHashMap<Field, FieldWrapper> cache = new WeakHashMap<>();
 
-        if (field.getType().equals(WeakReference.class))
-            return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+        @Getter
+        private final Field field;
 
-        return field.getType();
-    }
+        @Getter
+        private final Class<?> type;
 
-    /**
-     * Inject the given value into the given field in the given object.
-     * <p/>
-     * This method wraps the value into an {@link Optional} or {@link WeakReference}
-     * if necessary
-     *
-     * @param instance the instance to inject into
-     * @param field    the field to inject into
-     * @param value    the value to inject
-     */
-    protected void inject(@NotNull Object instance, @NotNull Field field, @Nullable Object value) {
-        field.setAccessible(true);
+        @Getter
+        @Setter
+        private boolean optional;
 
-        if (field.getType().equals(Optional.class))
-            value = Optional.ofNullable(value);
+        private FieldWrapper(Field field) {
+            this.field = field;
 
-        if (field.getType().equals(WeakReference.class))
-            value = new WeakReference<>(value);
+            this.type = resolveType();
 
-        try {
-            field.set(instance, value);
-        } catch (IllegalAccessException e) {
-            log.error("Cannot inject value", e);
-            throw new InjectionException(e);
+            if(field.isAnnotationPresent(io.freefair.injection.annotation.Optional.class))
+                optional = true;
+        }
+
+        private Class<?> resolveType() {
+            if (field.getType().equals(Optional.class)) {
+                setOptional(true);
+                return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            }
+
+            if (field.getType().equals(WeakReference.class))
+                return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+
+            return field.getType();
+        }
+
+        public static FieldWrapper of(Field field) {
+            if (cache.containsKey(field)) {
+                return cache.get(field);
+            }
+
+            FieldWrapper fieldWrapper = new FieldWrapper(field);
+
+            cache.put(field, fieldWrapper);
+            return fieldWrapper;
+        }
+
+        public void set(Object instance, Object value) {
+
+            if(value == null && !isOptional()){
+                throw new InjectionException("No value for required field " + field.toString());
+            }
+            try {
+                field.setAccessible(true);
+            } catch (SecurityException ignored) {
+
+            }
+
+            if (field.getType().equals(Optional.class))
+                value = Optional.ofNullable(value);
+
+            if (field.getType().equals(WeakReference.class))
+                value = new WeakReference<>(value);
+
+            try {
+                field.set(instance, value);
+            } catch (IllegalAccessException e) {
+                log.error("Cannot inject value", e);
+                throw new InjectionException(e);
+            }
+        }
+
+        public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+            return getField().isAnnotationPresent(annotationClass);
+        }
+
+        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+            return getField().getAnnotation(annotationClass);
         }
     }
 }

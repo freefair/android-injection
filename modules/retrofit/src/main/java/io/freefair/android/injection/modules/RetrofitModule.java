@@ -4,9 +4,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import io.freefair.injection.InjectionModule;
-import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.android.injection.modules.retrofit.ServiceProvider;
+import io.freefair.injection.InjectionModuleBase;
+import io.freefair.injection.injector.Injector;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.provider.CombiningBeanProvider;
+import io.freefair.injection.provider.SupplierProvider;
 import io.freefair.util.function.Consumer;
+import io.freefair.util.function.Optional;
 import io.freefair.util.function.Predicate;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
@@ -17,7 +21,7 @@ import retrofit.RestAdapter;
  * and Services.
  */
 @SuppressWarnings("unused")
-public class RetrofitModule implements InjectionModule {
+public class RetrofitModule extends InjectionModuleBase {
 
     @NonNull
     private Consumer<RestAdapter.Builder> configurator;
@@ -37,8 +41,8 @@ public class RetrofitModule implements InjectionModule {
     }
 
     @Override
-    public void configure(final RuntimeInjector runtimeInjector) {
-        runtimeInjector.registerSupplier(RestAdapter.class, Suppliers.cache(new Supplier<RestAdapter>() {
+    public Optional<? extends BeanProvider> getBeanProvider() {
+        SupplierProvider<RestAdapter> restAdapterProvider = new SupplierProvider<>(RestAdapter.class, Suppliers.cache(new Supplier<RestAdapter>() {
             @Nullable
             @Override
             public RestAdapter get() {
@@ -48,6 +52,30 @@ public class RetrofitModule implements InjectionModule {
             }
         }));
 
-        runtimeInjector.registerProvider(new ServiceProvider(servicePredicate));
+        ServiceProvider serviceProvider = new ServiceProvider(servicePredicate);
+
+        return Optional.of(new CombiningBeanProvider(restAdapterProvider, serviceProvider));
+    }
+
+    public static class ServiceProvider implements BeanProvider {
+
+        @NonNull
+        private Predicate<Class<?>> servicePredicate;
+
+        public ServiceProvider(@NonNull Predicate<Class<?>> servicePredicate) {
+            this.servicePredicate = servicePredicate;
+        }
+
+        @Override
+        public boolean canProvideBean(Class<?> type) {
+            return type.isInterface() && servicePredicate.test(type);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
+            RestAdapter restAdapter = injector.resolveBean(RestAdapter.class, instance);
+            return (T) restAdapter.create(clazz);
+        }
     }
 }

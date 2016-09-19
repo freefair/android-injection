@@ -1,18 +1,18 @@
 package io.freefair.android.injection.modules.realm;
 
-import io.freefair.injection.InjectionProvider;
+import io.freefair.injection.provider.BeanProvider;
 import io.freefair.injection.injector.Injector;
 import io.realm.Realm;
 
-abstract class BaseRealmProvider implements InjectionProvider {
+abstract class BaseRealmProvider implements BeanProvider {
     @Override
-    public boolean canProvide(Class<?> clazz) {
-        return clazz.isAssignableFrom(Realm.class);
+    public boolean canProvideBean(Class<?> type) {
+        return type.isAssignableFrom(Realm.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T provide(Class<? super T> clazz, Object instance, Injector injector) {
+    public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
         return (T) createRealm(instance, injector);
     }
 

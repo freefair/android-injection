@@ -1,7 +1,12 @@
 package io.freefair.injection;
 
-import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.provider.ValueProvider;
+import io.freefair.util.function.Optional;
 
 public interface InjectionModule {
-    void configure(RuntimeInjector runtimeInjector);
+
+    Optional<? extends BeanProvider> getBeanProvider();
+
+    Optional<? extends ValueProvider> getValueProvider();
 }

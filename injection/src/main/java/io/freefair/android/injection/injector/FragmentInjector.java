@@ -1,5 +1,6 @@
 package io.freefair.android.injection.injector;
 
+import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -17,5 +18,10 @@ public class FragmentInjector extends AndroidViewInjector<Fragment> {
             return getObject().getView().findViewById(viewId);
         }
         return null;
+    }
+
+    @Override
+    protected Context getNearestContext(Object instance) {
+        return getObject().getActivity();
     }
 }
