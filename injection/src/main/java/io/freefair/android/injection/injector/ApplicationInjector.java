@@ -3,6 +3,8 @@ package io.freefair.android.injection.injector;
 import android.app.Application;
 import android.os.Bundle;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.freefair.util.function.Optional;
 
 public class ApplicationInjector extends AndroidResourceInjector<Application> {
@@ -11,6 +13,7 @@ public class ApplicationInjector extends AndroidResourceInjector<Application> {
         super(object, possibleParents);
     }
 
+    @NotNull
     @SuppressWarnings("unchecked")
     @Override
     public <V> Optional<V> resolveValue(String key, Class<V> type) {

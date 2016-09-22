@@ -74,8 +74,12 @@ public class RetrofitModule extends InjectionModuleBase {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
-            RestAdapter restAdapter = injector.resolveBean(RestAdapter.class, instance);
-            return (T) restAdapter.create(clazz);
+            Optional<? extends RestAdapter> restAdapter = injector.resolveBean(RestAdapter.class, instance);
+            if (restAdapter.isPresent()) {
+                return (T) restAdapter.get().create(clazz);
+            } else {
+                return null;
+            }
         }
     }
 }

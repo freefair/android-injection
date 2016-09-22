@@ -17,6 +17,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +93,12 @@ public abstract class AndroidResourceInjector<T> extends Injector {
             i++;
         }
 
-        TypedArray typedArray = resolveBean(Resources.Theme.class, getObject()).obtainStyledAttributes(attrIds);
+        Optional<? extends Resources.Theme> optionalTheme = resolveBean(Resources.Theme.class, getObject());
+        if (!optionalTheme.isPresent()) {
+            throw new InjectionException("Theme not found");
+        }
+
+        TypedArray typedArray = optionalTheme.get().obtainStyledAttributes(attrIds);
 
         int index = 0;
         for (Map.Entry<FieldWrapper, InjectAttribute> entry : attributeBinding.entrySet()) {
@@ -187,7 +194,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
     @TargetApi(LOLLIPOP)
     public void injectResources() {
 
-        Resources resources = resolveBean(Resources.class, getObject());
+        Resources resources = resolveBean(Resources.class, getObject()).orNull();
         if (resources == null)
             throw new InjectionException("Resources.class not found");
 
@@ -233,7 +240,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                     case DRAWABLE:
                         Drawable drawable;
                         if (SDK_INT >= LOLLIPOP) {
-                            drawable = resolveBean(Context.class, getObject()).getDrawable(resourceId);
+                            drawable = getNearestContext(getObject()).getDrawable(resourceId);
                         } else {
                             drawable = resources.getDrawable(resourceId);
                         }
@@ -301,25 +308,28 @@ public abstract class AndroidResourceInjector<T> extends Injector {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <B> B resolveBean(@NonNull Class<B> type, Object instance) {
+    @NonNull
+    @NotNull
+    public <B> Optional<? extends B> resolveBean(@NonNull Class<B> type, Object instance) {
 
         if (type.equals(Context.class)) {
             if (Context.class.isAssignableFrom(getObjectClass())) {
-                return (B) ((Context) getObject()).getApplicationContext();
+                Context applicationContext = ((Context) getObject()).getApplicationContext();
+                return Optional.of((B) applicationContext);
             }
         }
 
         if (type.isAssignableFrom(getObjectClass()))
-            return (B) getObject();
+            return Optional.of((B) getObject());
 
         if (type.isAssignableFrom(Resources.Theme.class)) {
             Context context = getNearestContext(instance);
-            return (B) context.getTheme();
+            return Optional.of((B) context.getTheme());
         }
 
         if (type.isAssignableFrom(Resources.class)) {
             Context context = getNearestContext(instance);
-            return (B) context.getResources();
+            return Optional.of((B) context.getResources());
         }
 
         return super.resolveBean(type, instance);
@@ -330,7 +340,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
         if (Context.class.isAssignableFrom(getObjectClass())) {
             context = (Context) getObject();
         } else {
-            context = resolveBean(Context.class, instance);
+            context = resolveBean(Context.class, instance).orNull();
         }
         return context;
     }

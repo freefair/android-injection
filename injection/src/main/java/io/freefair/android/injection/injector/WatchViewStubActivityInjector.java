@@ -7,6 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
+import io.freefair.util.function.Optional;
+
 /**
  * @author Dennis Fricke
  */
@@ -19,11 +23,13 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
         this.stub = stub;
     }
 
+    @NotNull
+    @NonNull
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T resolveBean(@NonNull Class<T> type, Object instance) {
+    public <T> Optional<? extends T> resolveBean(@NonNull Class<T> type, Object instance) {
         if (type.isAssignableFrom(Context.class))
-            return (T) stub.getContext();
+            return Optional.of((T) stub.getContext());
 
         return super.resolveBean(type, instance);
     }

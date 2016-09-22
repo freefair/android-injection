@@ -107,9 +107,9 @@ public abstract class Injector {
                     ? field.getType()
                     : injectAnnotation.value();
 
-            Object bean = getInjector(instance).resolveBean(targetType, instance);
+            Optional<?> bean = getInjector(instance).resolveBean(targetType, instance);
 
-            field.set(instance, bean);
+            field.set(instance, bean.orNull());
         }
 
         if (field.isAnnotationPresent(Value.class)) {
@@ -132,27 +132,27 @@ public abstract class Injector {
      * <p/>
      * The base implementation asks the parent if possible or tries to provide a new instance
      *
+     * @param <T>      the type of the object to return
      * @param type     the type of the object to return
      * @param instance the instance the returned object will be injected into
-     * @param <T>      the type of the object to return
      * @return The object to use for the given type
      */
     @SuppressWarnings("unchecked")
-    @Nullable
-    public <T> T resolveBean(@NotNull Class<T> type, @Nullable Object instance) {
+    @NotNull
+    public <T> Optional<? extends T> resolveBean(@NotNull Class<T> type, @Nullable Object instance) {
         for (Object inst : instancesStack) {
             if (type.isInstance(inst))
-                return (T) inst;
+                return Optional.of((T) inst);
         }
 
         if (parentInjector.isPresent()) {
             return parentInjector.get().resolveBean(type, instance);
         } else {
             try {
-                return createNewInstance(type, instance);
+                return Optional.ofNullable(createNewInstance(type, instance));
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                return Optional.empty();
             }
         }
     }
@@ -181,7 +181,7 @@ public abstract class Injector {
                     Class<?>[] parameterTypes = constructor.getParameterTypes();
                     Object[] parameterValues = new Object[parameterTypes.length];
                     for (int i = 0; i < parameterTypes.length; i++) {
-                        parameterValues[i] = getInjector(instance).resolveBean(parameterTypes[i], null);
+                        parameterValues[i] = getInjector(instance).resolveBean(parameterTypes[i], null).orNull();
                     }
 
                     try {

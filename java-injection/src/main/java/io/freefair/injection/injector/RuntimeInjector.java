@@ -36,6 +36,7 @@ public class RuntimeInjector extends Injector {
     private Deque<ValueProvider> valueProviders = new ArrayDeque<>();
 
     private RuntimeInjector() {
+        //noinspection NullArgumentToVariableArgMethod
         super(null);
 
         valueProviders.addLast(new PropertiesValueProvider());
@@ -73,17 +74,17 @@ public class RuntimeInjector extends Injector {
         valueProviders.addFirst(valueProvider);
     }
 
+    @NotNull
     @Override
     @SuppressWarnings("unchecked")
-    @Nullable
-    public <T> T resolveBean(@NotNull Class<T> type, Object instance) {
+    public <T> Optional<? extends T> resolveBean(@NotNull Class<T> type, Object instance) {
         if (type.isAssignableFrom(Injector.class)) {
-            return (T) this;
+            return Optional.of((T) this);
         }
 
         if (type.isAnnotation()) {
             Class<? extends Annotation> annotationType = (Class<? extends Annotation>) type;
-            return (T) instance.getClass().getAnnotation(annotationType);
+            return Optional.of((T) instance.getClass().getAnnotation(annotationType));
         }
 
         T value = null;
@@ -96,11 +97,12 @@ public class RuntimeInjector extends Injector {
         }
 
         if (value != null)
-            return value;
+            return Optional.ofNullable(value);
 
         return super.resolveBean(type, instance);
     }
 
+    @NotNull
     @Override
     public <V> Optional<V> resolveValue(String key, Class<V> type) {
 

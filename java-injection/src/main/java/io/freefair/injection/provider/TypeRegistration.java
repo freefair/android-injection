@@ -2,9 +2,6 @@ package io.freefair.injection.provider;
 
 import io.freefair.injection.injector.Injector;
 
-/**
- * Created by larsgrefer on 17.09.16.
- */
 public class TypeRegistration<IMPL extends IFACE, IFACE> implements BeanProvider {
 
     private final Class<IMPL> implClass;
@@ -23,6 +20,6 @@ public class TypeRegistration<IMPL extends IFACE, IFACE> implements BeanProvider
     @Override
     @SuppressWarnings("unchecked")
     public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
-        return (T) injector.resolveBean(implClass, instance);
+        return (T) injector.resolveBean(implClass, instance).orNull();
     }
 }
