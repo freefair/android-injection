@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.Deque;
@@ -148,12 +147,7 @@ public abstract class Injector {
         if (parentInjector.isPresent()) {
             return parentInjector.get().resolveBean(type, instance);
         } else {
-            try {
-                return Optional.ofNullable(createNewInstance(type, instance));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return Optional.empty();
-            }
+            return Optional.empty();
         }
     }
 
@@ -163,39 +157,6 @@ public abstract class Injector {
             return parentInjector.get().resolveValue(key, type);
         else
             return Optional.empty();
-    }
-
-    @Nullable
-    @SuppressWarnings("unchecked")
-    private <T> T createNewInstance(@NotNull Class<T> type, Object instance) {
-
-        T newInstance = null;
-        try {
-            newInstance = type.newInstance();
-        } catch (Exception e) {
-            //Look for constructor annotated with @Inject
-            for (Constructor<?> constructor : type.getConstructors()) {
-                if (constructor.isAnnotationPresent(Inject.class)) {
-
-                    //resolve constructor params;
-                    Class<?>[] parameterTypes = constructor.getParameterTypes();
-                    Object[] parameterValues = new Object[parameterTypes.length];
-                    for (int i = 0; i < parameterTypes.length; i++) {
-                        parameterValues[i] = getInjector(instance).resolveBean(parameterTypes[i], null).orNull();
-                    }
-
-                    try {
-                        newInstance = (T) constructor.newInstance(parameterValues);
-                    } catch (Exception e1) {
-                        log.error("Error while calling constructor " + constructor.toString(), e1);
-                    }
-                }
-            }
-        }
-        if (newInstance != null) {
-            getInjector(instance).inject(newInstance);
-        }
-        return newInstance;
     }
 
     protected static class FieldWrapper {
@@ -216,7 +177,7 @@ public abstract class Injector {
 
             this.type = resolveType();
 
-            if(field.isAnnotationPresent(io.freefair.injection.annotation.Optional.class))
+            if (field.isAnnotationPresent(io.freefair.injection.annotation.Optional.class))
                 optional = true;
         }
 
@@ -245,7 +206,7 @@ public abstract class Injector {
 
         public void set(Object instance, Object value) {
 
-            if(value == null && !isOptional()){
+            if (value == null && !isOptional()) {
                 throw new InjectionException("No value for required field " + field.toString());
             }
             try {

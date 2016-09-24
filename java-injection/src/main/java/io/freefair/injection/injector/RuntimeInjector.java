@@ -1,7 +1,6 @@
 package io.freefair.injection.injector;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
@@ -10,6 +9,7 @@ import java.util.Properties;
 
 import io.freefair.injection.InjectionModule;
 import io.freefair.injection.provider.BeanProvider;
+import io.freefair.injection.provider.NewInstanceProvider;
 import io.freefair.injection.provider.SupplierProvider;
 import io.freefair.injection.provider.TypeRegistration;
 import io.freefair.injection.provider.ValueProvider;
@@ -42,6 +42,8 @@ public class RuntimeInjector extends Injector {
         valueProviders.addLast(new PropertiesValueProvider());
         valueProviders.addLast(new SystemPropertiesValueProvider());
         valueProviders.addLast(new EnvValueProvider());
+
+        beanProviders.addLast(new NewInstanceProvider());
     }
 
     public void registerModule(InjectionModule injectionModule) {
@@ -90,7 +92,7 @@ public class RuntimeInjector extends Injector {
         T value = null;
         for (BeanProvider beanProvider : beanProviders) {
             if (beanProvider.canProvideBean(type)) {
-                value = beanProvider.provideBean(type, instance, this);
+                value = beanProvider.provideBean(type, instance, getInjector(instance));
                 if (value != null)
                     break;
             }
