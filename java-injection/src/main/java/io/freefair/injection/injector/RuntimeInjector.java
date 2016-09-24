@@ -86,7 +86,7 @@ public class RuntimeInjector extends Injector {
 
         if (type.isAnnotation()) {
             Class<? extends Annotation> annotationType = (Class<? extends Annotation>) type;
-            return Optional.of((T) instance.getClass().getAnnotation(annotationType));
+            return Optional.ofNullable((T) instance.getClass().getAnnotation(annotationType));
         }
 
         T value = null;
