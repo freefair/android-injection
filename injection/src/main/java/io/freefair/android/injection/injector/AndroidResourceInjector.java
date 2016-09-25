@@ -312,13 +312,6 @@ public abstract class AndroidResourceInjector<T> extends Injector {
     @NotNull
     public <B> Optional<? extends B> resolveBean(@NonNull Class<B> type, Object instance) {
 
-        if (type.equals(Context.class)) {
-            if (Context.class.isAssignableFrom(getObjectClass())) {
-                Context applicationContext = ((Context) getObject()).getApplicationContext();
-                return Optional.of((B) applicationContext);
-            }
-        }
-
         if (type.isAssignableFrom(getObjectClass()))
             return Optional.of((B) getObject());
 
