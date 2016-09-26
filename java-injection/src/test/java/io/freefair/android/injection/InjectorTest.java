@@ -1,14 +1,12 @@
 package io.freefair.android.injection;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import io.freefair.injection.annotation.Inject;
 import io.freefair.injection.injector.RuntimeInjector;
 import io.freefair.util.function.Suppliers;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class InjectorTest {
 
@@ -27,7 +25,7 @@ public class InjectorTest {
 
         injector.inject(a);
 
-        assertEquals("FOO", a.getB().getTest());
+        Assert.assertEquals("FOO", a.getB().getTest());
     }
 
     public static class A {
@@ -47,35 +45,6 @@ public class InjectorTest {
 
         public String getTest() {
             return test;
-        }
-    }
-
-    @Test
-    public void testConstructorInjection() {
-        C c = new C();
-
-        injector.inject(c);
-    }
-
-    public static class C {
-        @Inject
-        ConstructorInjectionTest cit;
-
-        public ConstructorInjectionTest getCit() {
-            return cit;
-        }
-    }
-
-    public static class ConstructorInjectionTest {
-
-        @Inject
-        public ConstructorInjectionTest(A a, B b, String string) {
-            assertNotNull(a);
-            assertNotNull(b);
-            assertNotNull(string);
-
-            assertEquals(string, b.getTest());
-            assertEquals(string, a.getB().getTest());
         }
     }
 

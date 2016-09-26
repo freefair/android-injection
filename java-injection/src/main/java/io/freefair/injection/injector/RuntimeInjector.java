@@ -80,9 +80,10 @@ public class RuntimeInjector extends Injector {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Optional<? extends T> resolveBean(@NotNull Class<T> type, Object instance) {
-        if (type.isAssignableFrom(Injector.class)) {
-            return Optional.of((T) this);
-        }
+
+        Optional<? extends T> optional = super.resolveBean(type, instance);
+        if(optional.isPresent())
+            return optional;
 
         if (type.isAnnotation()) {
             Class<? extends Annotation> annotationType = (Class<? extends Annotation>) type;
@@ -98,10 +99,7 @@ public class RuntimeInjector extends Injector {
             }
         }
 
-        if (value != null)
-            return Optional.ofNullable(value);
-
-        return super.resolveBean(type, instance);
+        return Optional.ofNullable(value);
     }
 
     @NotNull

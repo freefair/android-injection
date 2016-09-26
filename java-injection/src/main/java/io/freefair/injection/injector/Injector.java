@@ -150,6 +150,10 @@ public abstract class Injector {
                 return Optional.of((T) inst);
         }
 
+        if (type.isAssignableFrom(Injector.class)) {
+            return Optional.of((T) this);
+        }
+
         if (parentInjector.isPresent()) {
             return parentInjector.get().resolveBean(type, instance);
         } else {
