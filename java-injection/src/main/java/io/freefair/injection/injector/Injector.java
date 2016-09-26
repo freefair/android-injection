@@ -10,6 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -69,7 +70,8 @@ public abstract class Injector {
 
             instancesStack.addLast(instance);
             alreadyInjectedInstances.put(instance, clazz);
-            for (Field field : Reflection.getAllFields(clazz, getUpToExcluding(clazz))) {
+            for (Field field : getFields(clazz)) {
+                log.trace("Visit field {}", field);
                 visitField(instance, FieldWrapper.of(field));
             }
             instancesStack.removeLast();
@@ -77,6 +79,14 @@ public abstract class Injector {
             long end = System.currentTimeMillis();
             log.debug("Injection of " + instance + " took " + (end - start) + "ms");
         }
+    }
+
+    private static WeakHashMap<Class<?>,List<Field>> fieldCache = new WeakHashMap<>();
+
+    private List<Field> getFields(@NotNull Class<?> clazz) {
+        if(!fieldCache.containsKey(clazz))
+            fieldCache.put(clazz, Reflection.getAllFields(clazz, getUpToExcluding(clazz)));
+        return fieldCache.get(clazz);
     }
 
     @Getter(PROTECTED)

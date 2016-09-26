@@ -20,10 +20,6 @@ public class Reflection {
         return getAllFields(clazz, Optional.<Class<? super T>>empty(), filter);
     }
 
-    public static <T> List<Field> getDeclaredFields(Class<T> clazz, Class<? super T> upToExcluding) {
-        return getAllFields(clazz, Optional.<Class<? super T>>ofNullable(upToExcluding), Predicates.alwaysTrue());
-    }
-
     public static <T> List<Field> getAllFields(Class<T> clazz, Class<? super T> upToExcluding) {
         return getAllFields(clazz, upToExcluding, Predicates.alwaysTrue());
     }
