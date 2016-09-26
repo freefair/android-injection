@@ -1,6 +1,0 @@
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.freefair.android.injection.modules.retrofit2">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-</manifest>
