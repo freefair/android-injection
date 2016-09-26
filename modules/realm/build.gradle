@@ -15,7 +15,7 @@ android {
 }
 
 dependencies {
-    compile project(':injection')
+    compile project(':android-injection')
     compile 'io.realm:realm-android-library:1.0.1'
     testCompile 'junit:junit:4.12'
 }
