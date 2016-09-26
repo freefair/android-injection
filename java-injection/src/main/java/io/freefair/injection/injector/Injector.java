@@ -130,10 +130,6 @@ public abstract class Injector {
 
             field.set(instance, value.orNull());
         }
-
-        if (parentInjector.isPresent()) {
-            parentInjector.get().visitField(instance, field);
-        }
     }
 
     /**
