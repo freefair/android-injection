@@ -9,8 +9,7 @@ import io.freefair.injection.InjectionModule;
 import io.freefair.injection.InjectionModuleBase;
 import io.freefair.injection.injector.Injector;
 import io.freefair.injection.provider.BeanProvider;
-import io.freefair.injection.provider.CombiningBeanProvider;
-import io.freefair.injection.provider.SupplierProvider;
+import io.freefair.injection.provider.BeanProviders;
 import io.freefair.util.function.Consumer;
 import io.freefair.util.function.Optional;
 import io.freefair.util.function.Predicate;
@@ -36,11 +35,11 @@ public class Retrofit2Module extends InjectionModuleBase {
 
     @Override
     public Optional<? extends BeanProvider> getBeanProvider() {
-        SupplierProvider<Retrofit> retrofitProvider = new SupplierProvider<>(Retrofit.class, retrofitSupplier);
+        BeanProvider retrofitProvider = BeanProviders.ofSupplier(Retrofit.class, retrofitSupplier);
 
         ServiceProvider serviceProvider = new ServiceProvider(servicePredicate);
 
-        return Optional.of(new CombiningBeanProvider(retrofitProvider, serviceProvider));
+        return Optional.of(BeanProviders.combine(retrofitProvider, serviceProvider));
 
     }
 

@@ -8,7 +8,7 @@ import java.io.File;
 
 import io.freefair.injection.provider.BeanProvider;
 import io.freefair.injection.InjectionModuleBase;
-import io.freefair.injection.provider.SupplierProvider;
+import io.freefair.injection.provider.BeanProviders;
 import io.freefair.util.function.Consumer;
 import io.freefair.util.function.Optional;
 import io.freefair.util.function.Supplier;
@@ -34,7 +34,7 @@ public class OkHttp3Module extends InjectionModuleBase {
 
     @Override
     public Optional<? extends BeanProvider> getBeanProvider() {
-        SupplierProvider<OkHttpClient> okHttpClientSupplierProvider = new SupplierProvider<>(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
+        BeanProvider okHttpClientSupplierProvider = BeanProviders.ofSupplier(OkHttpClient.class, Suppliers.cache(new Supplier<OkHttpClient>() {
             @Nullable
             @Override
             public OkHttpClient get() {

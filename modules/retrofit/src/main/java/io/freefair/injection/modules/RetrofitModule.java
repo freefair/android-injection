@@ -1,5 +1,7 @@
 package io.freefair.injection.modules;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -7,13 +9,13 @@ import io.freefair.injection.InjectionModule;
 import io.freefair.injection.InjectionModuleBase;
 import io.freefair.injection.injector.Injector;
 import io.freefair.injection.provider.BeanProvider;
-import io.freefair.injection.provider.CombiningBeanProvider;
-import io.freefair.injection.provider.SupplierProvider;
+import io.freefair.injection.provider.BeanProviders;
 import io.freefair.util.function.Consumer;
 import io.freefair.util.function.Optional;
 import io.freefair.util.function.Predicate;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import retrofit.RestAdapter;
 
@@ -25,19 +27,19 @@ import retrofit.RestAdapter;
 @RequiredArgsConstructor
 public class RetrofitModule extends InjectionModuleBase {
 
-    @lombok.NonNull
+    @NonNull
     private final Supplier<RestAdapter> restAdapterSupplier;
 
-    @lombok.NonNull
+    @NonNull
     private final Predicate<Class<?>> servicePredicate;
 
     @Override
     public Optional<? extends BeanProvider> getBeanProvider() {
-        SupplierProvider<RestAdapter> retrofitProvider = new SupplierProvider<>(RestAdapter.class, restAdapterSupplier);
+        BeanProvider retrofitProvider = BeanProviders.ofSupplier(RestAdapter.class, restAdapterSupplier);
 
         ServiceProvider serviceProvider = new ServiceProvider(servicePredicate);
 
-        return Optional.of(new CombiningBeanProvider(retrofitProvider, serviceProvider));
+        return Optional.of(BeanProviders.combine(retrofitProvider, serviceProvider));
     }
 
     public static Builder builder() {
@@ -47,7 +49,7 @@ public class RetrofitModule extends InjectionModuleBase {
     @RequiredArgsConstructor
     private class ServiceProvider implements BeanProvider {
 
-        @lombok.NonNull
+        @NonNull
         private final Predicate<Class<?>> servicePredicate;
 
         @Override
@@ -65,32 +67,32 @@ public class RetrofitModule extends InjectionModuleBase {
     @SuppressWarnings("unused")
     public static class Builder {
 
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         private Supplier<RestAdapter> restAdapterSupplier;
 
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         private Predicate<Class<?>> servicePredicate;
 
-        public Builder restAdapter(@lombok.NonNull Supplier<RestAdapter> restAdapterSupplier) {
+        public Builder restAdapter(@NonNull Supplier<RestAdapter> restAdapterSupplier) {
             this.restAdapterSupplier = Suppliers.cache(restAdapterSupplier);
             return this;
         }
 
-        public Builder restAdapter(@lombok.NonNull RestAdapter retrofit) {
+        public Builder restAdapter(@NonNull RestAdapter retrofit) {
             restAdapterSupplier = Suppliers.of(retrofit);
             return this;
         }
 
-        public Builder restAdapter(@lombok.NonNull Consumer<RestAdapter.Builder> configurator) {
+        public Builder restAdapter(@NonNull Consumer<RestAdapter.Builder> configurator) {
             return restAdapter(new RestAdapterSupplier(configurator));
         }
 
-        public Builder services(@lombok.NonNull Predicate<Class<?>> servicePredicate) {
+        public Builder services(@NonNull Predicate<Class<?>> servicePredicate) {
             this.servicePredicate = servicePredicate;
             return this;
         }
 
-        public Builder services(@lombok.NonNull Collection<Class<?>> services) {
+        public Builder services(@NonNull Collection<Class<?>> services) {
             this.servicePredicate = new ServiceCollectionPredicate(services);
             return this;
         }
@@ -113,7 +115,7 @@ public class RetrofitModule extends InjectionModuleBase {
         @RequiredArgsConstructor
         private static class RestAdapterSupplier implements Supplier<RestAdapter> {
 
-            @lombok.NonNull
+            @NonNull
             private final Consumer<RestAdapter.Builder> configurator;
 
             @Override
@@ -127,11 +129,11 @@ public class RetrofitModule extends InjectionModuleBase {
         @RequiredArgsConstructor
         private static class ServiceCollectionPredicate implements Predicate<Class<?>> {
 
-            @lombok.NonNull
+            @NonNull
             private final Collection<Class<?>> list;
 
             @Override
-            public boolean test(@org.jetbrains.annotations.Nullable Class<?> t) {
+            public boolean test(@Nullable Class<?> t) {
                 return list.contains(t);
             }
         }

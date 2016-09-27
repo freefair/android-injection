@@ -14,6 +14,7 @@ import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
@@ -33,7 +34,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -218,11 +218,11 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         field.getField().setBoolean(object, aBoolean);
                         break;
                     case COLOR:
-                        int color = resources.getColor(resourceId);
+                        int color = ContextCompat.getColor(getNearestContext(getObject()), resourceId);
                         field.getField().setInt(object, color);
                         break;
                     case COLOR_STATE_LIST:
-                        ColorStateList colorStateList = resources.getColorStateList(resourceId);
+                        ColorStateList colorStateList = ContextCompat.getColorStateList(getNearestContext(getObject()), resourceId);
                         field.set(object, colorStateList);
                         break;
                     case DIMENSION:
@@ -238,12 +238,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         field.getField().setInt(object, dimensionPixelSize);
                         break;
                     case DRAWABLE:
-                        Drawable drawable;
-                        if (SDK_INT >= LOLLIPOP) {
-                            drawable = getNearestContext(getObject()).getDrawable(resourceId);
-                        } else {
-                            drawable = resources.getDrawable(resourceId);
-                        }
+                        Drawable drawable = ContextCompat.getDrawable(getNearestContext(getObject()), resourceId);
                         field.set(object, drawable);
                         break;
                     case FRACTION:

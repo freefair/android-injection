@@ -3,20 +3,21 @@ package io.freefair.injection.injector;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Properties;
 
 import io.freefair.injection.InjectionModule;
+import io.freefair.injection.annotation.Inject;
 import io.freefair.injection.provider.BeanProvider;
-import io.freefair.injection.provider.NewInstanceProvider;
-import io.freefair.injection.provider.SupplierProvider;
-import io.freefair.injection.provider.TypeRegistration;
 import io.freefair.injection.provider.ValueProvider;
+import io.freefair.injection.provider.ValueProviders;
 import io.freefair.util.function.Optional;
-import io.freefair.util.function.Supplier;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 public class RuntimeInjector extends Injector {
 
@@ -39,40 +40,30 @@ public class RuntimeInjector extends Injector {
         //noinspection NullArgumentToVariableArgMethod
         super(null);
 
-        valueProviders.addLast(new PropertiesValueProvider());
+        valueProviders.addLast(ValueProviders.of(properties));
         valueProviders.addLast(new SystemPropertiesValueProvider());
         valueProviders.addLast(new EnvValueProvider());
 
         beanProviders.addLast(new NewInstanceProvider());
     }
 
-    public void registerModule(InjectionModule injectionModule) {
+    public void register(InjectionModule injectionModule) {
         Optional<? extends BeanProvider> beanProvider = injectionModule.getBeanProvider();
         if (beanProvider.isPresent()) {
-            registerBeanProvider(beanProvider.get());
+            register(beanProvider.get());
         }
 
         Optional<? extends ValueProvider> valueProvider = injectionModule.getValueProvider();
         if (valueProvider.isPresent()) {
-            registerValueProvider(valueProvider.get());
+            register(valueProvider.get());
         }
     }
 
-    @Deprecated
-    public <IMPL extends IFACE, IFACE> void registerType(Class<IMPL> impl, final Class<IFACE> iFace) {
-        this.registerBeanProvider(new TypeRegistration<>(impl, iFace));
-    }
-
-    @Deprecated
-    public <T> void registerSupplier(Class<T> type, Supplier<? extends T> supplier) {
-        this.registerBeanProvider(new SupplierProvider<>(type, supplier));
-    }
-
-    public void registerBeanProvider(BeanProvider beanProvider) {
+    public void register(BeanProvider beanProvider) {
         beanProviders.addFirst(beanProvider);
     }
 
-    public void registerValueProvider(ValueProvider valueProvider) {
+    public void register(ValueProvider valueProvider) {
         valueProviders.addFirst(valueProvider);
     }
 
@@ -113,20 +104,6 @@ public class RuntimeInjector extends Injector {
         }
 
         return super.resolveValue(key, type);
-    }
-
-    private class PropertiesValueProvider implements ValueProvider {
-
-        @Override
-        public boolean canProvideValue(String key, Class<?> type) {
-            return properties.containsKey(key) && type.isInstance(properties.get(key));
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <V> V provideValue(String key, Class<? super V> type) {
-            return (V) properties.get(key);
-        }
     }
 
     private static class SystemPropertiesValueProvider implements ValueProvider {
@@ -187,6 +164,59 @@ public class RuntimeInjector extends Injector {
         @Override
         public <V> V provideValue(String key, Class<? super V> type) {
             return (V) System.getenv(key);
+        }
+    }
+
+    @Slf4j
+    private static class NewInstanceProvider implements BeanProvider {
+
+        @Override
+        public boolean canProvideBean(Class<?> type) {
+            if (type.isPrimitive() || type.isAnnotation() || type.isArray() || type.isEnum() || type.isInterface())
+                return false;
+
+            if (Modifier.isAbstract(type.getModifiers()))
+                return false;
+
+            try {
+                type.newInstance();
+                return true;
+            } catch (Exception ignored) {
+                return false;
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
+
+            T newInstance = null;
+            try {
+                newInstance = (T) clazz.newInstance();
+            } catch (Exception e) {
+                //Look for constructor annotated with @Inject
+                for (Constructor<?> constructor : clazz.getConstructors()) {
+                    if (constructor.isAnnotationPresent(Inject.class)) {
+
+                        //resolve constructor params;
+                        Class<?>[] parameterTypes = constructor.getParameterTypes();
+                        Object[] parameterValues = new Object[parameterTypes.length];
+                        for (int i = 0; i < parameterTypes.length; i++) {
+                            parameterValues[i] = injector.resolveBean(parameterTypes[i], null).orNull();
+                        }
+
+                        try {
+                            newInstance = (T) constructor.newInstance(parameterValues);
+                        } catch (Exception e1) {
+                            NewInstanceProvider.log.error("Error while calling constructor " + constructor.toString(), e1);
+                        }
+                    }
+                }
+            }
+            if (newInstance != null) {
+                injector.inject(newInstance);
+            }
+            return newInstance;
         }
     }
 }

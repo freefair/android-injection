@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import io.freefair.android.injection.injector.ApplicationInjector;
-import io.freefair.injection.InjectionModule;
 import io.freefair.injection.injector.RuntimeInjector;
+import io.freefair.injection.provider.BeanProviders;
 import io.freefair.injection.provider.InjectorProvider;
-import io.freefair.injection.provider.SupplierProvider;
-import io.freefair.util.function.Suppliers;
+import io.freefair.util.function.Supplier;
 
 /**
  * An {@link Application} with support for dependency injection
@@ -24,7 +23,12 @@ public abstract class InjectionApplication extends Application implements Inject
     public void onCreate() {
         super.onCreate();
 
-        runtimeInjector.registerBeanProvider(new SupplierProvider<>(Context.class, Suppliers.of(this.getApplicationContext())));
+        runtimeInjector.register(BeanProviders.ofSupplier(Context.class, new Supplier<Context>() {
+            @Override
+            public Context get() {
+                return getApplicationContext();
+            }
+        }));
 
         applicationInjector = new ApplicationInjector(this);
 
@@ -54,9 +58,5 @@ public abstract class InjectionApplication extends Application implements Inject
 
     public ApplicationInjector getInjector() {
         return applicationInjector;
-    }
-
-    public void addModule(InjectionModule injectionModule) {
-        runtimeInjector.registerModule(injectionModule);
     }
 }

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import io.freefair.injection.annotation.Inject;
 import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.util.function.Suppliers;
+import io.freefair.injection.provider.BeanProviders;
 
 public class InjectorTest {
 
@@ -15,7 +15,7 @@ public class InjectorTest {
     @Before
     public void setUp() {
         injector = RuntimeInjector.getInstance();
-        injector.registerSupplier(String.class, Suppliers.of("FOO"));
+        injector.register(BeanProviders.of(String.class, "FOO"));
     }
 
     @Test
