@@ -75,7 +75,7 @@ public class Retrofit2Module extends InjectionModuleBase {
         private Predicate<Class<?>> servicePredicate;
 
         public Builder retrofit(@NonNull Supplier<Retrofit> retrofitSupplier) {
-            this.retrofitSupplier = Suppliers.cache(retrofitSupplier);
+            this.retrofitSupplier = retrofitSupplier;
             return this;
         }
 
@@ -110,7 +110,7 @@ public class Retrofit2Module extends InjectionModuleBase {
             if (servicePredicate == null)
                 throw new IllegalStateException("services not set");
 
-            return new Retrofit2Module(retrofitSupplier, servicePredicate);
+            return new Retrofit2Module(Suppliers.cache(retrofitSupplier), servicePredicate);
         }
 
         @RequiredArgsConstructor

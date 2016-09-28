@@ -2,7 +2,6 @@ rootProject.name = "injection"
 
 include ':java-injection'
 include ':android-injection'
-include ':modules:logging'
 include ':modules:realm'
 include ':modules:okhttp'
 include ':modules:okhttp3'
