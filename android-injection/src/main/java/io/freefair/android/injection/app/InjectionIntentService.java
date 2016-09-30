@@ -21,8 +21,8 @@ public abstract class InjectionIntentService extends IntentService implements In
 
     @Override
     public void onCreate() {
-        super.onCreate();
         intentServiceInjector = new IntentServiceInjector(this, getApplication());
+        super.onCreate();
         intentServiceInjector.inject(this);
         intentServiceInjector.injectAttributes();
         intentServiceInjector.injectResources();

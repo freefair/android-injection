@@ -30,9 +30,9 @@ public abstract class InjectionAppCompatActivity extends AppCompatActivity imple
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        activityInjector = new ActivityInjector(this, getApplication());
         super.onCreate(savedInstanceState);
 
-        activityInjector = new ActivityInjector(this, getApplication());
         activityInjector.inject(this);
 
         if (xmlLayoutAnnotation.isPresent()) {

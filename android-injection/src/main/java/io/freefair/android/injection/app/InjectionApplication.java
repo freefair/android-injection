@@ -21,6 +21,7 @@ public abstract class InjectionApplication extends Application implements Inject
 
     @Override
     public void onCreate() {
+        applicationInjector = new ApplicationInjector(this);
         super.onCreate();
 
         runtimeInjector.register(BeanProviders.ofSupplier(Context.class, new Supplier<Context>() {
@@ -29,8 +30,6 @@ public abstract class InjectionApplication extends Application implements Inject
                 return getApplicationContext();
             }
         }));
-
-        applicationInjector = new ApplicationInjector(this);
 
         applicationInjector.inject(this);
         injectAttributesAndResources();

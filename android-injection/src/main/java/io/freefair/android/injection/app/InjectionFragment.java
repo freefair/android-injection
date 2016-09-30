@@ -20,7 +20,7 @@ import io.freefair.util.function.Optional;
 @SuppressWarnings("unused")
 public abstract class InjectionFragment extends Fragment implements InjectorProvider {
 
-    private FragmentInjector injector;
+    private FragmentInjector fragmentInjector;
 
     @Inject
     Optional<XmlMenu> xmlMenuAnnotation;
@@ -29,10 +29,10 @@ public abstract class InjectionFragment extends Fragment implements InjectorProv
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        fragmentInjector = new FragmentInjector(this, getActivity(), getActivity().getApplication());
         super.onCreate(savedInstanceState);
 
-        injector = new FragmentInjector(this, getActivity(), getActivity().getApplication());
-        injector.inject(this);
+        fragmentInjector.inject(this);
         if (xmlMenuAnnotation.isPresent()) {
             setHasOptionsMenu(true);
         }
@@ -51,7 +51,7 @@ public abstract class InjectionFragment extends Fragment implements InjectorProv
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        injector.injectViews();
+        fragmentInjector.injectViews();
     }
 
     @Override
@@ -69,14 +69,14 @@ public abstract class InjectionFragment extends Fragment implements InjectorProv
     }
 
     private void injectAttributesAndResources() {
-        if (injector != null) {
-            injector.injectResources();
-            injector.injectAttributes();
+        if (fragmentInjector != null) {
+            fragmentInjector.injectResources();
+            fragmentInjector.injectAttributes();
         }
     }
 
     @Override
     public FragmentInjector getInjector() {
-        return injector;
+        return fragmentInjector;
     }
 }

@@ -16,9 +16,9 @@ public abstract class InjectionService extends Service implements InjectorProvid
 
     @Override
     public void onCreate() {
+        serviceInjector = new ServiceInjector(this, getApplication());
         super.onCreate();
 
-        serviceInjector = new ServiceInjector(this, getApplication());
         serviceInjector.inject(this);
         injectAttributesAndResources();
     }

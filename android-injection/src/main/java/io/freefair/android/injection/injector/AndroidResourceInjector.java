@@ -46,7 +46,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
 
     public AndroidResourceInjector(T object, Object... possibleParents) {
         super(possibleParents);
-        this.setObject(object);
+        this.object = object;
         getTopClasses().add(Application.class);
         getTopClasses().add(Fragment.class);
         try {
