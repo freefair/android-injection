@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.res.Configuration;
 
 import io.freefair.android.injection.injector.ServiceInjector;
-import io.freefair.injection.provider.InjectorProvider;
+import io.freefair.android.injection.provider.InjectorProvider;
 
 /**
  * A {@link Service} with support for dependency injection

@@ -1,4 +1,4 @@
-package io.freefair.injection.injector;
+package io.freefair.android.injection.injector;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import io.freefair.injection.annotation.Inject;
-import io.freefair.injection.annotation.Value;
-import io.freefair.injection.exceptions.InjectionException;
-import io.freefair.injection.reflection.Reflection;
+import io.freefair.android.injection.annotation.Inject;
+import io.freefair.android.injection.annotation.Value;
+import io.freefair.android.injection.exceptions.InjectionException;
+import io.freefair.android.injection.reflection.Reflection;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -187,7 +187,7 @@ public abstract class Injector {
 
             this.type = resolveType();
 
-            if (field.isAnnotationPresent(io.freefair.injection.annotation.Optional.class))
+            if (field.isAnnotationPresent(io.freefair.android.injection.annotation.Optional.class))
                 optional = true;
         }
 

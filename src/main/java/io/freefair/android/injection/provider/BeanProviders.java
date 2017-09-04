@@ -1,9 +1,9 @@
-package io.freefair.injection.provider;
+package io.freefair.android.injection.provider;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import io.freefair.injection.injector.Injector;
+import io.freefair.android.injection.injector.Injector;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
 import lombok.NoArgsConstructor;

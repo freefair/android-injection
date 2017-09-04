@@ -1,4 +1,4 @@
-package io.freefair.injection.provider;
+package io.freefair.android.injection.provider;
 
 import org.junit.Assert;
 import org.junit.Test;

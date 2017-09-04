@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.freefair.injection.annotation.Inject;
-import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.injection.provider.BeanProviders;
+import io.freefair.android.injection.annotation.Inject;
+import io.freefair.android.injection.injector.RuntimeInjector;
+import io.freefair.android.injection.provider.BeanProviders;
 
 public class InjectorTest {
 

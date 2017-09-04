@@ -1,7 +1,7 @@
-package io.freefair.injection;
+package io.freefair.android.injection;
 
-import io.freefair.injection.provider.BeanProvider;
-import io.freefair.injection.provider.ValueProvider;
+import io.freefair.android.injection.provider.BeanProvider;
+import io.freefair.android.injection.provider.ValueProvider;
 import io.freefair.util.function.Optional;
 
 /**

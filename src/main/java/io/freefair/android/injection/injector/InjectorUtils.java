@@ -1,6 +1,6 @@
-package io.freefair.injection.injector;
+package io.freefair.android.injection.injector;
 
-import io.freefair.injection.provider.InjectorProvider;
+import io.freefair.android.injection.provider.InjectorProvider;
 
 public class InjectorUtils {
 

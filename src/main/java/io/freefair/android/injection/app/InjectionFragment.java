@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.FragmentInjector;
-import io.freefair.injection.provider.InjectorProvider;
-import io.freefair.injection.annotation.Inject;
+import io.freefair.android.injection.provider.InjectorProvider;
+import io.freefair.android.injection.annotation.Inject;
 import io.freefair.util.function.Optional;
 
 @SuppressWarnings("unused")

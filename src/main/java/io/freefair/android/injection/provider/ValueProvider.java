@@ -1,4 +1,4 @@
-package io.freefair.injection.provider;
+package io.freefair.android.injection.provider;
 
 public interface ValueProvider {
     boolean canProvideValue(String key, Class<?> type);

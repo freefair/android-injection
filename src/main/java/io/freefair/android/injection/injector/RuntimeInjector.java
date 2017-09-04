@@ -1,4 +1,4 @@
-package io.freefair.injection.injector;
+package io.freefair.android.injection.injector;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -9,11 +9,11 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Properties;
 
-import io.freefair.injection.InjectionModule;
-import io.freefair.injection.annotation.Inject;
-import io.freefair.injection.provider.BeanProvider;
-import io.freefair.injection.provider.ValueProvider;
-import io.freefair.injection.provider.ValueProviders;
+import io.freefair.android.injection.InjectionModule;
+import io.freefair.android.injection.annotation.Inject;
+import io.freefair.android.injection.provider.BeanProvider;
+import io.freefair.android.injection.provider.ValueProvider;
+import io.freefair.android.injection.provider.ValueProviders;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;

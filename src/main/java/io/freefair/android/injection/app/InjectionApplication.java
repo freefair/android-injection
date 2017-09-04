@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import io.freefair.android.injection.injector.ApplicationInjector;
-import io.freefair.injection.injector.RuntimeInjector;
-import io.freefair.injection.provider.BeanProviders;
-import io.freefair.injection.provider.InjectorProvider;
+import io.freefair.android.injection.injector.RuntimeInjector;
+import io.freefair.android.injection.provider.BeanProviders;
+import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.util.function.Supplier;
 
 /**

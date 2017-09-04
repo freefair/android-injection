@@ -1,6 +1,6 @@
-package io.freefair.injection.provider;
+package io.freefair.android.injection.provider;
 
-import io.freefair.injection.injector.Injector;
+import io.freefair.android.injection.injector.Injector;
 
 public interface BeanProvider {
     boolean canProvideBean(Class<?> type);

@@ -1,4 +1,4 @@
-package io.freefair.injection.provider;
+package io.freefair.android.injection.provider;
 
 import java.util.Properties;
 
