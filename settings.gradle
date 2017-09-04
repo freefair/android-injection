@@ -2,5 +2,3 @@ rootProject.name = "injection"
 
 include ':java-injection'
 include ':android-injection'
-include ':modules:okhttp3'
-include ':modules:retrofit2'
