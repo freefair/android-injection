@@ -13,14 +13,19 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
+    lintOptions {
+        warning 'GradleCompatible'
+    }
 }
 
 dependencies {
     compile project(':java-injection')
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'org.slf4j:slf4j-api:1.7.21'
 
-    provided 'com.google.android.support:wearable:1.4.0'
+    //noinspection GradleCompatible
+    provided 'com.google.android.support:wearable:1.4.0@aar'
     provided 'org.projectlombok:lombok:1.16.10'
 
     testCompile 'junit:junit:4.12'
