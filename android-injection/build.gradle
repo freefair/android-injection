@@ -1,9 +1,17 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'io.freefair.android-maven-jars'
+apply plugin: 'io.freefair.android-ci'
 
 android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
+
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 25
+        versionCode 1
+        versionName project.version
         consumerProguardFiles 'proguard-rules.pro'
     }
     compileOptions {
