@@ -22,17 +22,9 @@ Dependency Injection for Java and Android
 
 The modules enable the injection of certain classes:
 
-- `logging`
-  - `io.freefair.android.util.logging.Logger`
-- `okhttp`
-  - `com.squareup.okhttp.OkHttpClient`
 - `okhttp3`
   - `okhttp3.OkHttpClient`
-- `retrofit`
-  - `retrofit.RestAdapter`
   - all your services
 - `retrofit2`
  - `retrofit2.Retrofit`
   - all your services
-- `realm`
-  - `io.realm.Realm`
