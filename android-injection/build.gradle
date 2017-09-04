@@ -28,9 +28,9 @@ android {
 }
 
 dependencies {
-    compile project(':java-injection')
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'io.freefair.android-util:function:3.0.0'
+    compile 'org.slf4j:slf4j-api:1.7.25'
 
     //noinspection GradleCompatible
     provided 'com.google.android.support:wearable:1.4.0@aar'

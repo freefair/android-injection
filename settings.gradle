@@ -1,4 +1,3 @@
 rootProject.name = "injection"
 
-include ':java-injection'
 include ':android-injection'
