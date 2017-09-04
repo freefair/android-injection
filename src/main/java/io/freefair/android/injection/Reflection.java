@@ -1,4 +1,4 @@
-package io.freefair.android.injection.reflection;
+package io.freefair.android.injection;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

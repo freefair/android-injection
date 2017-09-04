@@ -9,7 +9,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Properties;
 
-import io.freefair.android.injection.InjectionModule;
 import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.provider.BeanProvider;
 import io.freefair.android.injection.provider.ValueProvider;
@@ -45,18 +44,6 @@ public class RuntimeInjector extends Injector {
         valueProviders.addLast(new EnvValueProvider());
 
         beanProviders.addLast(new NewInstanceProvider());
-    }
-
-    public void register(InjectionModule injectionModule) {
-        Optional<? extends BeanProvider> beanProvider = injectionModule.getBeanProvider();
-        if (beanProvider.isPresent()) {
-            register(beanProvider.get());
-        }
-
-        Optional<? extends ValueProvider> valueProvider = injectionModule.getValueProvider();
-        if (valueProvider.isPresent()) {
-            register(valueProvider.get());
-        }
     }
 
     public void register(BeanProvider beanProvider) {

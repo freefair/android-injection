@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
 
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
-import io.freefair.android.injection.exceptions.InjectionException;
+import io.freefair.android.injection.InjectionException;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;
