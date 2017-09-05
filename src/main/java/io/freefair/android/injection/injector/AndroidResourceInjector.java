@@ -106,6 +106,12 @@ public abstract class AndroidResourceInjector<T> extends Injector {
             InjectAttribute annotation = entry.getValue();
 
             try {
+                field.getField().setAccessible(true);
+            } catch (SecurityException e) {
+                log.warn(e.getLocalizedMessage(), e);
+            }
+
+            try {
                 switch (annotation.type()) {
                     case BOOLEAN:
                         boolean aBoolean = typedArray.getBoolean(index, false);
@@ -182,8 +188,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
                         break;
                 }
             } catch (IllegalAccessException iae) {
-                log.error(iae.getMessage());
-                iae.printStackTrace();
+                log.error(iae.getMessage(), iae);
             }
             index++;
         }
@@ -204,6 +209,12 @@ public abstract class AndroidResourceInjector<T> extends Injector {
 
             if (!field.getType().isAssignableFrom(annotation.type().getClazz())) {
                 logFieldTypeMissmatch(field.getField(), annotation.type().getClazz());
+            }
+
+            try {
+                field.getField().setAccessible(true);
+            } catch (SecurityException e) {
+                log.warn(e.getLocalizedMessage(), e);
             }
 
             try {
