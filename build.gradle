@@ -16,11 +16,12 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'io.freefair.android-maven-jars'
 apply plugin: 'io.freefair.android-ci'
+apply plugin: 'io.freefair.android-pmd'
+apply plugin: 'io.freefair.android-findbugs'
 
 android {
     compileSdkVersion 25
