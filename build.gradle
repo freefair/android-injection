@@ -54,8 +54,8 @@ dependencies {
 
     //noinspection GradleCompatible
     provided 'com.google.android.support:wearable:1.4.0@aar'
-    provided 'org.projectlombok:lombok:1.16.10'
+    provided 'org.projectlombok:lombok:1.16.18'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'org.slf4j:slf4j-simple:1.7.21'
+    testCompile 'org.slf4j:slf4j-simple:1.7.25'
 }

@@ -18,6 +18,7 @@ import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.annotation.Value;
 import io.freefair.android.injection.InjectionException;
 import io.freefair.android.injection.Reflection;
+import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,11 +34,11 @@ public abstract class Injector {
 
     private final Optional<Injector> parentInjector;
 
-    public Injector(Object... parentInjectors) {
+    Injector(Object... parentInjectors) {
         if (parentInjectors == null) {
             this.parentInjector = Optional.empty();
         } else {
-            this.parentInjector = Optional.of(InjectorUtils.getParentInjector(parentInjectors));
+            this.parentInjector = Optional.of(getParentInjector(parentInjectors));
         }
         topClasses = new HashSet<>();
     }
@@ -61,7 +62,7 @@ public abstract class Injector {
         inject(instance, instance.getClass());
     }
 
-    Deque<Object> instancesStack = new LinkedList<>();
+    private Deque<Object> instancesStack = new LinkedList<>();
 
     public final void inject(@NotNull Object instance, @NotNull Class<?> clazz) {
         responsibleInjectors.put(instance, this);
@@ -169,7 +170,20 @@ public abstract class Injector {
             return Optional.empty();
     }
 
-    protected static class FieldWrapper {
+    private static Injector getParentInjector(Object... possibleParents) {
+        for (Object possibleParent : possibleParents) {
+            if (possibleParent instanceof Injector) {
+                return (Injector) possibleParent;
+            }
+
+            if (possibleParent instanceof InjectorProvider) {
+                return ((InjectorProvider) possibleParent).getInjector();
+            }
+        }
+        return RuntimeInjector.getInstance();
+    }
+
+    static class FieldWrapper {
         private static WeakHashMap<Field, FieldWrapper> cache = new WeakHashMap<>();
 
         @Getter

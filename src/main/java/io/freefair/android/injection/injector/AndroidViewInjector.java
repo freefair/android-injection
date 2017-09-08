@@ -10,9 +10,9 @@ import java.util.WeakHashMap;
 
 import io.freefair.android.injection.annotation.InjectView;
 
-public abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> {
+abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> {
 
-    public AndroidViewInjector(T object, Object... possibleParents) {
+    AndroidViewInjector(T object, Object... possibleParents) {
         super(object, possibleParents);
     }
 
@@ -34,7 +34,7 @@ public abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> 
 
     protected abstract View findViewById(@IdRes int viewId);
 
-    static class Bindings {
+    private static class Bindings {
         private static WeakHashMap<Class<?>, Map<FieldWrapper, Integer>> viewBindings = new WeakHashMap<>();
 
         @NonNull

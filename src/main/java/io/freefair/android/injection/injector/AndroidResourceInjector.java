@@ -18,8 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +35,13 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static lombok.AccessLevel.PROTECTED;
 
 @Slf4j
-public abstract class AndroidResourceInjector<T> extends Injector {
+abstract class AndroidResourceInjector<T> extends Injector {
 
     @Getter(PROTECTED)
     @Setter(PROTECTED)
     private T object;
 
-    public AndroidResourceInjector(T object, Object... possibleParents) {
+    AndroidResourceInjector(T object, Object... possibleParents) {
         super(possibleParents);
         this.object = object;
         getTopClasses().add(Application.class);
@@ -314,7 +312,6 @@ public abstract class AndroidResourceInjector<T> extends Injector {
     @Override
     @SuppressWarnings("unchecked")
     @NonNull
-    @NotNull
     public <B> Optional<? extends B> resolveBean(@NonNull Class<B> type, Object instance) {
 
         if (type.isAssignableFrom(getObjectClass()))
@@ -343,7 +340,7 @@ public abstract class AndroidResourceInjector<T> extends Injector {
         return context;
     }
 
-    static class Bindings {
+    private static class Bindings {
         private static WeakHashMap<Class<?>, Map<FieldWrapper, InjectAttribute>> attributeBindings = new WeakHashMap<>();
         private static WeakHashMap<Class<?>, Map<FieldWrapper, InjectResource>> resourceBindings = new WeakHashMap<>();
 
