@@ -7,8 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.freefair.util.function.Optional;
 
 /**
@@ -23,7 +21,6 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
         this.stub = stub;
     }
 
-    @NotNull
     @NonNull
     @SuppressWarnings("unchecked")
     @Override

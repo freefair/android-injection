@@ -35,7 +35,6 @@ public abstract class InjectionApplication extends Application implements Inject
 
         applicationInjector.inject(this);
         injectAttributesAndResources();
-
     }
 
     @Override

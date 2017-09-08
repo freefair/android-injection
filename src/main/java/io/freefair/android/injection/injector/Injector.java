@@ -1,7 +1,7 @@
 package io.freefair.android.injection.injector;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
@@ -58,13 +58,13 @@ public abstract class Injector {
      *
      * @param instance The object to inject into
      */
-    public final void inject(@NotNull Object instance) {
+    public final void inject(@NonNull Object instance) {
         inject(instance, instance.getClass());
     }
 
     private Deque<Object> instancesStack = new LinkedList<>();
 
-    public final void inject(@NotNull Object instance, @NotNull Class<?> clazz) {
+    public final void inject(@NonNull Object instance, @NonNull Class<?> clazz) {
         responsibleInjectors.put(instance, this);
         if (!alreadyInjectedInstances.containsKey(instance)) {
             long start = System.currentTimeMillis();
@@ -84,7 +84,7 @@ public abstract class Injector {
 
     private static WeakHashMap<Class<?>, List<Field>> fieldCache = new WeakHashMap<>();
 
-    private List<Field> getFields(@NotNull Class<?> clazz) {
+    private List<Field> getFields(@NonNull Class<?> clazz) {
         if (!fieldCache.containsKey(clazz)) {
             fieldCache.put(clazz, Reflection.getAllFields(clazz, getUpToExcluding(clazz)));
         }
@@ -94,7 +94,7 @@ public abstract class Injector {
     @Getter(PROTECTED)
     private Set<Class<?>> topClasses;
 
-    @NotNull
+    @NonNull
     @SuppressWarnings("unchecked")
     private <X> Class<X> getUpToExcluding(Class<? extends X> clazz) {
         for (Class<?> topClazz : topClasses) {
@@ -111,7 +111,7 @@ public abstract class Injector {
      * @param instance the instance to inject into
      * @param field    the field to inject
      */
-    protected void visitField(@NotNull Object instance, @NotNull FieldWrapper field) {
+    protected void visitField(@NonNull Object instance, @NonNull FieldWrapper field) {
         if (field.isAnnotationPresent(Inject.class)) {
             Inject injectAnnotation = field.getAnnotation(Inject.class);
 
@@ -139,8 +139,8 @@ public abstract class Injector {
      * @return The object to use for the given type
      */
     @SuppressWarnings("unchecked")
-    @NotNull
-    public <T> Optional<? extends T> resolveBean(@NotNull Class<T> type, @Nullable Object instance) {
+    @NonNull
+    public <T> Optional<? extends T> resolveBean(@NonNull Class<T> type, @Nullable Object instance) {
         for (Object inst : instancesStack) {
             if (type.isInstance(inst)) {
                 return Optional.of((T) inst);
