@@ -11,7 +11,9 @@ import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.util.function.Supplier;
 
 /**
- * An {@link Application} with support for dependency injection
+ * An {@link Application} with support for dependency injection.
+ *
+ * @author Lars Grefer
  */
 @SuppressWarnings("unused")
 public abstract class InjectionApplication extends Application implements InjectorProvider {

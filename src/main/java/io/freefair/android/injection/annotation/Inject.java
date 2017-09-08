@@ -7,6 +7,9 @@ import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * @author Lars Grefer
+ */
 @Target({FIELD, CONSTRUCTOR})
 @Retention(RUNTIME)
 public @interface Inject {

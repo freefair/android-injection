@@ -7,9 +7,14 @@ import java.util.List;
 import io.freefair.util.function.Optional;
 import io.freefair.util.function.Predicate;
 import io.freefair.util.function.Predicates;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author Lars Grefer
+ */
 @Slf4j
+@UtilityClass
 public class Reflection {
 
     public static <T> List<Field> getAllFields(Class<T> clazz) {

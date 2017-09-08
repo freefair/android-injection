@@ -14,9 +14,9 @@ import io.freefair.android.injection.injector.WatchViewStubActivityInjector;
  */
 @SuppressWarnings("unused")
 public abstract class InjectionWearableActivity extends Activity implements InjectorProvider {
-    WatchViewStubActivityInjector injector;
+    private WatchViewStubActivityInjector injector;
 
-    Injector parentInjector;
+    private Injector parentInjector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

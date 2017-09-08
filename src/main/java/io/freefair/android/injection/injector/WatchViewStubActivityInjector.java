@@ -28,8 +28,9 @@ public class WatchViewStubActivityInjector extends AndroidViewInjector<Activity>
     @SuppressWarnings("unchecked")
     @Override
     public <T> Optional<? extends T> resolveBean(@NonNull Class<T> type, Object instance) {
-        if (type.isAssignableFrom(Context.class))
+        if (type.isAssignableFrom(Context.class)) {
             return Optional.of((T) stub.getContext());
+        }
 
         return super.resolveBean(type, instance);
     }

@@ -8,13 +8,16 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * @author Lars Grefer
+ */
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface InjectResource {
     @AnyRes int id();
 
     /**
-     * The type of resource to inject
+     * The type of resource to inject.
      */
     ResourceType type();
 }

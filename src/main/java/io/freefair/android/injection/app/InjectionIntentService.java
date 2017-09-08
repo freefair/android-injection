@@ -6,6 +6,9 @@ import android.content.res.Configuration;
 import io.freefair.android.injection.injector.IntentServiceInjector;
 import io.freefair.android.injection.provider.InjectorProvider;
 
+/**
+ * @author Lars Grefer
+ */
 public abstract class InjectionIntentService extends IntentService implements InjectorProvider {
 
     private IntentServiceInjector intentServiceInjector;

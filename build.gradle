@@ -22,6 +22,7 @@ apply plugin: 'io.freefair.android-maven-jars'
 apply plugin: 'io.freefair.android-ci'
 apply plugin: 'io.freefair.android-pmd'
 apply plugin: 'io.freefair.android-findbugs'
+apply plugin: 'io.freefair.android-checkstyle'
 
 android {
     compileSdkVersion 25

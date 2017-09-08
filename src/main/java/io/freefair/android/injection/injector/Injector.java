@@ -14,10 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import io.freefair.android.injection.annotation.Inject;
-import io.freefair.android.injection.annotation.Value;
 import io.freefair.android.injection.InjectionException;
 import io.freefair.android.injection.Reflection;
+import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
@@ -27,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import static lombok.AccessLevel.PROTECTED;
 
 /**
- * Abstact implementation of a dependency injector
+ * Abstact implementation of a dependency injector.
  */
 @Slf4j
 public abstract class Injector {
@@ -48,13 +47,14 @@ public abstract class Injector {
 
     protected Injector getInjector(Object instance) {
         Injector injector = responsibleInjectors.get(instance);
-        if (injector != null)
+        if (injector != null) {
             return injector;
+        }
         return this;
     }
 
     /**
-     * Injects as much as possible into the given object
+     * Injects as much as possible into the given object.
      *
      * @param instance The object to inject into
      */
@@ -82,11 +82,12 @@ public abstract class Injector {
         }
     }
 
-    private static WeakHashMap<Class<?>,List<Field>> fieldCache = new WeakHashMap<>();
+    private static WeakHashMap<Class<?>, List<Field>> fieldCache = new WeakHashMap<>();
 
     private List<Field> getFields(@NotNull Class<?> clazz) {
-        if(!fieldCache.containsKey(clazz))
+        if (!fieldCache.containsKey(clazz)) {
             fieldCache.put(clazz, Reflection.getAllFields(clazz, getUpToExcluding(clazz)));
+        }
         return fieldCache.get(clazz);
     }
 
@@ -97,14 +98,15 @@ public abstract class Injector {
     @SuppressWarnings("unchecked")
     private <X> Class<X> getUpToExcluding(Class<? extends X> clazz) {
         for (Class<?> topClazz : topClasses) {
-            if (topClazz.isAssignableFrom(clazz))
+            if (topClazz.isAssignableFrom(clazz)) {
                 return (Class<X>) topClazz;
+            }
         }
         return (Class<X>) Object.class;
     }
 
     /**
-     * Inject the field, or call super
+     * Inject the field, or call super.
      *
      * @param instance the instance to inject into
      * @param field    the field to inject
@@ -113,28 +115,21 @@ public abstract class Injector {
         if (field.isAnnotationPresent(Inject.class)) {
             Inject injectAnnotation = field.getAnnotation(Inject.class);
 
-            Class<?> targetType = injectAnnotation.value().equals(Object.class)
-                    ? field.getType()
-                    : injectAnnotation.value();
+            Class<?> targetType;
+            if (injectAnnotation.value().equals(Object.class)) {
+                targetType = field.getType();
+            } else {
+                targetType = injectAnnotation.value();
+            }
 
             Optional<?> bean = getInjector(instance).resolveBean(targetType, instance);
 
             field.set(instance, bean.orNull());
         }
-
-        if (field.isAnnotationPresent(Value.class)) {
-            Value valueAnnotation = field.getAnnotation(Value.class);
-
-            Class<?> targetType = field.getType();
-
-            Optional<?> value = getInjector(instance).resolveValue(valueAnnotation.value(), targetType);
-
-            field.set(instance, value.orNull());
-        }
     }
 
     /**
-     * Resolve the given type to an object, or call super
+     * Resolve the given type to an object, or call super.
      * <p/>
      * The base implementation asks the parent if possible or tries to provide a new instance
      *
@@ -147,8 +142,9 @@ public abstract class Injector {
     @NotNull
     public <T> Optional<? extends T> resolveBean(@NotNull Class<T> type, @Nullable Object instance) {
         for (Object inst : instancesStack) {
-            if (type.isInstance(inst))
+            if (type.isInstance(inst)) {
                 return Optional.of((T) inst);
+            }
         }
 
         if (type.isAssignableFrom(Injector.class)) {
@@ -160,14 +156,6 @@ public abstract class Injector {
         } else {
             return Optional.empty();
         }
-    }
-
-    @NotNull
-    public <V> Optional<V> resolveValue(String key, Class<V> type) {
-        if (parentInjector.isPresent())
-            return parentInjector.get().resolveValue(key, type);
-        else
-            return Optional.empty();
     }
 
     private static Injector getParentInjector(Object... possibleParents) {
@@ -183,7 +171,7 @@ public abstract class Injector {
         return RuntimeInjector.getInstance();
     }
 
-    static class FieldWrapper {
+    static final class FieldWrapper {
         private static WeakHashMap<Field, FieldWrapper> cache = new WeakHashMap<>();
 
         @Getter
@@ -201,8 +189,9 @@ public abstract class Injector {
 
             this.type = resolveType();
 
-            if (field.isAnnotationPresent(io.freefair.android.injection.annotation.Optional.class))
+            if (field.isAnnotationPresent(io.freefair.android.injection.annotation.Optional.class)) {
                 optional = true;
+            }
         }
 
         private Class<?> resolveType() {
@@ -211,8 +200,9 @@ public abstract class Injector {
                 return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
             }
 
-            if (field.getType().equals(WeakReference.class))
+            if (field.getType().equals(WeakReference.class)) {
                 return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+            }
 
             return field.getType();
         }
@@ -239,11 +229,13 @@ public abstract class Injector {
 
             }
 
-            if (field.getType().equals(Optional.class))
+            if (field.getType().equals(Optional.class)) {
                 value = Optional.ofNullable(value);
+            }
 
-            if (field.getType().equals(WeakReference.class))
+            if (field.getType().equals(WeakReference.class)) {
                 value = new WeakReference<>(value);
+            }
 
             try {
                 field.set(instance, value);

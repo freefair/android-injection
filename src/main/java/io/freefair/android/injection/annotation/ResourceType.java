@@ -6,6 +6,9 @@ import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
+/**
+ * @author Lars Grefer
+ */
 public enum ResourceType {
     ANIMATION(XmlResourceParser.class),
     BOOLEAN(boolean.class),

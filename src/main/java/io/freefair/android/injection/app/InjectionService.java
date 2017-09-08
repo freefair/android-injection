@@ -7,7 +7,7 @@ import io.freefair.android.injection.injector.ServiceInjector;
 import io.freefair.android.injection.provider.InjectorProvider;
 
 /**
- * A {@link Service} with support for dependency injection
+ * A {@link Service} with support for dependency injection.
  */
 @SuppressWarnings("unused")
 public abstract class InjectionService extends Service implements InjectorProvider {

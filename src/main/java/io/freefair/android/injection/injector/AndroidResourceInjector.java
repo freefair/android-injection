@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import io.freefair.android.injection.InjectionException;
 import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
-import io.freefair.android.injection.InjectionException;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;
@@ -197,8 +197,9 @@ abstract class AndroidResourceInjector<T> extends Injector {
     public void injectResources() {
 
         Resources resources = resolveBean(Resources.class, getObject()).orNull();
-        if (resources == null)
+        if (resources == null) {
             throw new InjectionException("Resources.class not found");
+        }
 
         for (Map.Entry<FieldWrapper, InjectResource> resourceBinding : Bindings.getResourceBinding(getObjectClass()).entrySet()) {
             FieldWrapper field = resourceBinding.getKey();
@@ -314,8 +315,9 @@ abstract class AndroidResourceInjector<T> extends Injector {
     @NonNull
     public <B> Optional<? extends B> resolveBean(@NonNull Class<B> type, Object instance) {
 
-        if (type.isAssignableFrom(getObjectClass()))
+        if (type.isAssignableFrom(getObjectClass())) {
             return Optional.of((B) getObject());
+        }
 
         if (type.isAssignableFrom(Resources.Theme.class)) {
             Context context = getNearestContext(instance);
@@ -346,15 +348,17 @@ abstract class AndroidResourceInjector<T> extends Injector {
 
         @NonNull
         static Map<FieldWrapper, InjectAttribute> getAttributeBinding(Class<?> clazz) {
-            if (!attributeBindings.containsKey(clazz))
+            if (!attributeBindings.containsKey(clazz)) {
                 attributeBindings.put(clazz, new HashMap<FieldWrapper, InjectAttribute>());
+            }
             return attributeBindings.get(clazz);
         }
 
         @NonNull
         static Map<FieldWrapper, InjectResource> getResourceBinding(Class<?> clazz) {
-            if (!resourceBindings.containsKey(clazz))
+            if (!resourceBindings.containsKey(clazz)) {
                 resourceBindings.put(clazz, new HashMap<FieldWrapper, InjectResource>());
+            }
             return resourceBindings.get(clazz);
         }
     }

@@ -17,15 +17,18 @@ import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.android.injection.annotation.Inject;
 import io.freefair.util.function.Optional;
 
+/**
+ * @author Lars Grefer
+ */
 @SuppressWarnings("unused")
 public abstract class InjectionFragment extends Fragment implements InjectorProvider {
 
     private FragmentInjector fragmentInjector;
 
     @Inject
-    Optional<XmlMenu> xmlMenuAnnotation;
+    private Optional<XmlMenu> xmlMenuAnnotation;
     @Inject
-    Optional<XmlLayout> xmlLayoutAnnotation;
+    private Optional<XmlLayout> xmlLayoutAnnotation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

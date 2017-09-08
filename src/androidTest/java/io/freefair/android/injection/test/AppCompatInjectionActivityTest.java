@@ -14,38 +14,41 @@ import io.freefair.android.injection.app.InjectionAppCompatActivity;
  */
 public class AppCompatInjectionActivityTest extends ActivityInstrumentationTestCase2<AppCompatInjectionActivityTest.AppCompatInjectionTestActivity> {
 
-	@Keep
-	AppCompatInjectionTestActivity activity;
+    @Keep
+    private AppCompatInjectionTestActivity activity;
 
-	public AppCompatInjectionActivityTest() {
-		super(AppCompatInjectionTestActivity.class);
-	}
+    public AppCompatInjectionActivityTest() {
+        super(AppCompatInjectionTestActivity.class);
+    }
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		activity = getActivity();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        activity = getActivity();
+    }
 
-	public void testLayoutInjection(){
-		View button = activity.findViewById(R.id.test_button);
-		assertNotNull(button);
-		assertEquals("FOO", ((Button)button).getText());
-	}
+    public void testLayoutInjection() {
+        View button = activity.findViewById(R.id.test_button);
+        assertNotNull(button);
+        assertEquals("FOO", ((Button) button).getText());
+    }
 
-	public void testViewInjection(){
-		assertEquals("FOO", activity.getButton().getText());
-	}
+    public void testViewInjection() {
+        assertEquals("FOO", activity.getButton().getText());
+    }
 
-	@Keep
-	@XmlLayout(R.layout.activity_test)
-	public static class AppCompatInjectionTestActivity extends InjectionAppCompatActivity {
+    /**
+     * @author Lars Grefer
+     */
+    @Keep
+    @XmlLayout(R.layout.activity_test)
+    public static class AppCompatInjectionTestActivity extends InjectionAppCompatActivity {
 
-		@InjectView(R.id.test_button)
-		private Button button;
+        @InjectView(R.id.test_button)
+        private Button button;
 
-		public Button getButton() {
-			return button;
-		}
-	}
+        public Button getButton() {
+            return button;
+        }
+    }
 }

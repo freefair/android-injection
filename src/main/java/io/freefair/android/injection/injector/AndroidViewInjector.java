@@ -39,8 +39,9 @@ abstract class AndroidViewInjector<T> extends AndroidResourceInjector<T> {
 
         @NonNull
         static Map<FieldWrapper, Integer> getViewBinding(Class<?> clazz) {
-            if (!viewBindings.containsKey(clazz))
+            if (!viewBindings.containsKey(clazz)) {
                 viewBindings.put(clazz, new HashMap<FieldWrapper, Integer>());
+            }
             return viewBindings.get(clazz);
         }
     }

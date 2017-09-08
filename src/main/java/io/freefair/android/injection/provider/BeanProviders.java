@@ -6,20 +6,23 @@ import java.util.Collection;
 import io.freefair.android.injection.injector.Injector;
 import io.freefair.util.function.Supplier;
 import io.freefair.util.function.Suppliers;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.UtilityClass;
 
-import static lombok.AccessLevel.PRIVATE;
-
-@NoArgsConstructor(access = PRIVATE)
+/**
+ * Utility class for creating {@link BeanProvider}s.
+ *
+ * @author Lars Grefer
+ */
+@UtilityClass
 public class BeanProviders {
 
     /**
-     * Create a {@link BeanProvider} providing the given Object
+     * Create a {@link BeanProvider} providing the given Object.
      *
      * @param object the Object to provide
-     * @param <B> the type of the Object to provide
+     * @param <B>    the type of the Object to provide
      * @return A {@link BeanProvider} providing the given Object
      */
     @SuppressWarnings("unchecked")
@@ -68,12 +71,14 @@ public class BeanProviders {
         @Override
         public <T> T provideBean(Class<? super T> clazz, Object instance, Injector injector) {
 
-            if (lastProvider != null && lastProvider.canProvideBean(clazz))
+            if (lastProvider != null && lastProvider.canProvideBean(clazz)) {
                 return lastProvider.provideBean(clazz, instance, injector);
+            }
 
             for (BeanProvider beanProvider : beanProviders) {
-                if (beanProvider.canProvideBean(clazz))
+                if (beanProvider.canProvideBean(clazz)) {
                     return beanProvider.provideBean(clazz, instance, injector);
+                }
             }
 
             return null;
@@ -87,15 +92,17 @@ public class BeanProviders {
         private final Supplier<? extends T> supplier;
 
         @Override
-        public boolean canProvideBean(Class<?> type) {
-            return type.isAssignableFrom(this.type);
+        public boolean canProvideBean(Class<?> typeToCheck) {
+            return typeToCheck.isAssignableFrom(type);
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public <B> B provideBean(Class<? super B> clazz, Object instance, Injector injector) {
             T value = supplier.get();
-            if (value == null) return null;
+            if (value == null) {
+                return null;
+            }
             injector.inject(value);
             return (B) value;
         }

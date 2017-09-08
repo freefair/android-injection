@@ -2,23 +2,22 @@ package io.freefair.android.injection.app;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.freefair.android.injection.annotation.Inject;
 import io.freefair.android.injection.annotation.XmlLayout;
 import io.freefair.android.injection.annotation.XmlMenu;
 import io.freefair.android.injection.injector.ActivityInjector;
 import io.freefair.android.injection.provider.InjectorProvider;
-import io.freefair.android.injection.annotation.Inject;
 import io.freefair.util.function.Optional;
 
-
 /**
- * An {@link AppCompatActivity} with support for dependency injection
+ * An {@link AppCompatActivity} with support for dependency injection.
+ *
+ * @author Lars Grefer
  */
 @SuppressWarnings("unused")
 public abstract class InjectionAppCompatActivity extends AppCompatActivity implements InjectorProvider {
@@ -26,9 +25,9 @@ public abstract class InjectionAppCompatActivity extends AppCompatActivity imple
     private ActivityInjector activityInjector;
 
     @Inject
-    protected Optional<XmlMenu> xmlMenuAnnotation;
+    private Optional<XmlMenu> xmlMenuAnnotation;
     @Inject
-    protected Optional<XmlLayout> xmlLayoutAnnotation;
+    private Optional<XmlLayout> xmlLayoutAnnotation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

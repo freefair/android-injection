@@ -5,6 +5,9 @@ import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
+/**
+ * @author Lars Grefer
+ */
 public class FragmentInjector extends AndroidViewInjector<Fragment> {
 
     public FragmentInjector(Fragment fragment, Object... possibleParents) {

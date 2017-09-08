@@ -7,6 +7,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @author Lars Grefer
+ */
 public class AndroidInjectorTest {
 
     @Test
