@@ -28,7 +28,6 @@ import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
