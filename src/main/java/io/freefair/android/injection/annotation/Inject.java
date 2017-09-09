@@ -13,6 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD, CONSTRUCTOR})
 @Retention(RUNTIME)
 public @interface Inject {
+
     /**
      * The desired type of object, that should be injected into this field.
      * <p/>

@@ -14,6 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface InjectResource {
+
+    /**
+     * The {@link android.R R.*}-ID of the resource to inject.
+     */
     @AnyRes int id();
 
     /**

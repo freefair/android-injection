@@ -16,6 +16,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 public @interface XmlLayout {
-    @LayoutRes int value();
 
+    /**
+     * The {@link android.R.layout R.layout}-ID of the layout to use for the annotated
+     * {@link io.freefair.android.injection.app.InjectionAppCompatActivity Activity} or
+     * {@link io.freefair.android.injection.app.InjectionFragment Fragment}.
+     */
+    @LayoutRes int value();
 }

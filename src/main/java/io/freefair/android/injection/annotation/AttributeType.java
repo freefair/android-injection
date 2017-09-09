@@ -4,11 +4,18 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Types of attributes which may be injected using {@link InjectAttribute}.
  *
  * @author Lars Grefer
+ * @see InjectAttribute#type()
  */
+@Getter
+@RequiredArgsConstructor
+@SuppressWarnings("WeakerAccess")
 public enum AttributeType {
     BOOLEAN(boolean.class),
     COLOR(int.class),
@@ -28,13 +35,5 @@ public enum AttributeType {
     TEXT_ARRAY(CharSequence[].class),
     TYPED_VALUE(TypedValue.class);
 
-    private Class<?> clazz;
-
-    AttributeType(Class<?> clazz) {
-        this.clazz = clazz;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
-    }
+    private final Class<?> clazz;
 }

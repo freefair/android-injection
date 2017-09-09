@@ -6,10 +6,18 @@ import android.graphics.Movie;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * @author Lars Grefer
+ * @see InjectResource#type()
  */
+@Getter
+@RequiredArgsConstructor
+@SuppressWarnings("WeakerAccess")
 public enum ResourceType {
+
     ANIMATION(XmlResourceParser.class),
     BOOLEAN(boolean.class),
     COLOR(int.class),
@@ -30,13 +38,5 @@ public enum ResourceType {
     TYPED_VALUE(TypedValue.class),
     XML(XmlResourceParser.class);
 
-    private Class<?> clazz;
-
-    ResourceType(Class<?> type) {
-        this.clazz = type;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
-    }
+    private final Class<?> clazz;
 }

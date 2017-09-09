@@ -16,5 +16,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 public @interface XmlMenu {
+
+    /**
+     * The {@link android.R.menu R.menu}-ID of the menu to use for the annotated
+     * {@link io.freefair.android.injection.app.InjectionAppCompatActivity Activity} or
+     * {@link io.freefair.android.injection.app.InjectionFragment Fragment}.
+     */
     @MenuRes int value();
 }

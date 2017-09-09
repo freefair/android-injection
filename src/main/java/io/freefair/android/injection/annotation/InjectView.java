@@ -16,5 +16,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Inherited
 public @interface InjectView {
+
+    /**
+     * The {@link android.R.id R.id}-ID of the view to inject.
+     */
     @IdRes int value();
 }

@@ -14,6 +14,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 public @interface InjectAttribute {
+
+    /**
+     * The {@link android.R.attr R.attr}-ID of the Attribute to inject.
+     */
     @AttrRes int id();
 
     /**
