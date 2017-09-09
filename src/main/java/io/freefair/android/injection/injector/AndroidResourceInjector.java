@@ -38,8 +38,7 @@ import static lombok.AccessLevel.PROTECTED;
 abstract class AndroidResourceInjector<T> extends Injector {
 
     @Getter(PROTECTED)
-    @Setter(PROTECTED)
-    private T object;
+    private final T object;
 
     AndroidResourceInjector(T object, Object... possibleParents) {
         super(possibleParents);

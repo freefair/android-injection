@@ -31,13 +31,14 @@ import static lombok.AccessLevel.PROTECTED;
 @Slf4j
 public abstract class Injector {
 
-    private final Optional<Injector> parentInjector;
+    @Nullable
+    private final Injector parentInjector;
 
     Injector(Object... parentInjectors) {
         if (parentInjectors == null) {
-            this.parentInjector = Optional.empty();
+            this.parentInjector = null;
         } else {
-            this.parentInjector = Optional.of(getParentInjector(parentInjectors));
+            this.parentInjector = getParentInjector(parentInjectors);
         }
         topClasses = new HashSet<>();
     }
@@ -151,8 +152,8 @@ public abstract class Injector {
             return Optional.of((T) this);
         }
 
-        if (parentInjector.isPresent()) {
-            return parentInjector.get().resolveBean(type, instance);
+        if (parentInjector != null) {
+            return parentInjector.resolveBean(type, instance);
         } else {
             return Optional.empty();
         }
@@ -218,7 +219,7 @@ public abstract class Injector {
             return fieldWrapper;
         }
 
-        public void set(Object instance, Object value) {
+        void set(Object instance, Object value) {
 
             if (value == null && !isOptional()) {
                 throw new InjectionException("No value for required field " + field.toString());
@@ -245,11 +246,11 @@ public abstract class Injector {
             }
         }
 
-        public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+        boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
             return getField().isAnnotationPresent(annotationClass);
         }
 
-        public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
             return getField().getAnnotation(annotationClass);
         }
     }
