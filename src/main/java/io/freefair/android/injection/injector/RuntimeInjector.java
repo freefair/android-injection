@@ -32,7 +32,7 @@ public final class RuntimeInjector extends Injector {
     private Deque<BeanProvider> beanProviders = new ArrayDeque<>();
 
     private RuntimeInjector() {
-        super();
+        super((Object[]) null);
     }
 
     public void register(BeanProvider beanProvider) {
