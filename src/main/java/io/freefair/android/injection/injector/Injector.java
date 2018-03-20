@@ -131,7 +131,7 @@ public abstract class Injector {
 
     /**
      * Resolve the given type to an object, or call super.
-     * <p/>
+     * <p>
      * The base implementation asks the parent if possible or tries to provide a new instance
      *
      * @param <T>      the type of the object to return
