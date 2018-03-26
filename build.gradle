@@ -47,7 +47,6 @@ android {
 dependencies {
     api 'com.android.support:appcompat-v7:27.1.0'
     api 'io.freefair.android-util:function:3.1.0'
-    api 'org.slf4j:slf4j-api:1.7.25'
 
     compileOnly 'com.google.android.support:wearable:2.2.0@aar'
     compileOnly 'com.google.android.wearable:wearable:2.2.0'
@@ -56,5 +55,4 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.16.20'
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
 }

@@ -15,4 +15,8 @@ public class InjectionException extends RuntimeException {
     public InjectionException(Throwable throwable) {
         super(throwable);
     }
+
+    public InjectionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

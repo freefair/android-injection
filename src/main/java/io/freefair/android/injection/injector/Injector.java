@@ -2,6 +2,7 @@ package io.freefair.android.injection.injector;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.lang.annotation.Annotation;
 import java.lang.ref.WeakReference;
@@ -21,14 +22,12 @@ import io.freefair.android.injection.provider.InjectorProvider;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import static lombok.AccessLevel.PROTECTED;
 
 /**
  * Abstact implementation of a dependency injector.
  */
-@Slf4j
 public abstract class Injector {
 
     @Nullable
@@ -73,13 +72,12 @@ public abstract class Injector {
             instancesStack.addLast(instance);
             alreadyInjectedInstances.put(instance, clazz);
             for (Field field : getFields(clazz)) {
-                log.trace("Visit field {}", field);
                 visitField(instance, FieldWrapper.of(field));
             }
             instancesStack.removeLast();
 
             long end = System.currentTimeMillis();
-            log.debug("Injection of " + instance + " took " + (end - start) + "ms");
+            Log.d(Injector.class.getSimpleName(), "inject: Injection of " + instance + " took " + (end - start) + "ms");
         }
     }
 
@@ -241,8 +239,7 @@ public abstract class Injector {
             try {
                 field.set(instance, value);
             } catch (IllegalAccessException e) {
-                log.error("Cannot inject value", e);
-                throw new InjectionException(e);
+                throw new InjectionException(String.format("Failed to inject value '%s' into field '%s'", value, field), e);
             }
         }
 

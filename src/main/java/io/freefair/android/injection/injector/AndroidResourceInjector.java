@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 
 import java.lang.reflect.Field;
@@ -28,12 +29,10 @@ import io.freefair.android.injection.annotation.InjectAttribute;
 import io.freefair.android.injection.annotation.InjectResource;
 import io.freefair.util.function.Optional;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static lombok.AccessLevel.PROTECTED;
 
-@Slf4j
 abstract class AndroidResourceInjector<T> extends Injector {
 
     @Getter(PROTECTED)
@@ -101,10 +100,12 @@ abstract class AndroidResourceInjector<T> extends Injector {
             FieldWrapper field = entry.getKey();
             InjectAttribute annotation = entry.getValue();
 
-            try {
-                field.getField().setAccessible(true);
-            } catch (SecurityException e) {
-                log.warn(e.getLocalizedMessage(), e);
+            if (!field.getField().isAccessible()) {
+                try {
+                    field.getField().setAccessible(true);
+                } catch (SecurityException e) {
+                    throw new InjectionException(String.format("Failed to make field '%s' accessible", field.getField()), e);
+                }
             }
 
             try {
@@ -180,11 +181,10 @@ abstract class AndroidResourceInjector<T> extends Injector {
                         field.set(object, typedValue);
                         break;
                     default:
-                        log.error("Unkown resource type at field " + field.getField().getName());
-                        break;
+                        throw new InjectionException(String.format("Unkown resource type at field '%s'", field.getField()));
                 }
             } catch (IllegalAccessException iae) {
-                log.error(iae.getMessage(), iae);
+                throw new InjectionException(String.format("Failed to inject '%s' attribute into field '%s'", annotation.type(), field.getField()), iae);
             }
             index++;
         }
@@ -208,10 +208,12 @@ abstract class AndroidResourceInjector<T> extends Injector {
                 logFieldTypeMissmatch(field.getField(), annotation.type().getClazz());
             }
 
-            try {
-                field.getField().setAccessible(true);
-            } catch (SecurityException e) {
-                log.warn(e.getLocalizedMessage(), e);
+            if (!field.getField().isAccessible()) {
+                try {
+                    field.getField().setAccessible(true);
+                } catch (SecurityException e) {
+                    throw new InjectionException(String.format("Failed to make field '%s' accessible", field.getField()), e);
+                }
             }
 
             try {
@@ -295,17 +297,16 @@ abstract class AndroidResourceInjector<T> extends Injector {
                         field.set(object, xml);
                         break;
                     default:
-                        log.error("Unkown resource type at field " + field.getField().getName());
-                        break;
+                        throw new InjectionException(String.format("Unkown resource type '%s' at field %s", annotation.type(), field.getField()));
                 }
             } catch (IllegalAccessException iae) {
-                log.error(iae.getMessage(), iae);
+                throw new InjectionException(String.format("Failed to inject '%s' resource into field '%s'", annotation.type(), field.getField()), iae);
             }
         }
     }
 
     private void logFieldTypeMissmatch(Field field, Class<?> clazz) {
-        log.warn("Possible field type missmatch at Field " + field.toString() + ". Going to inject type " + clazz.getName() + " but Field type is " + field.getType().getName());
+        Log.w(AndroidResourceInjector.class.getSimpleName(), "Possible field type missmatch at Field " + field.toString() + ". Going to inject type " + clazz.getName() + " but Field type is " + field.getType().getName());
     }
 
     @Override

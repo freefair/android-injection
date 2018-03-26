@@ -9,12 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Lars Grefer
  */
-@Slf4j
 @UtilityClass
 public class Reflection {
 
@@ -28,7 +26,6 @@ public class Reflection {
         Class<?> currentClass = clazz;
 
         do {
-            log.debug("Now checking class {}", currentClass.getName());
             fields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
             currentClass = currentClass.getSuperclass();
         }
