@@ -18,4 +18,4 @@ android:
 
 install: "./gradlew clean"
 
-script: "./gradlew build"
+script: "./gradlew build --info"
