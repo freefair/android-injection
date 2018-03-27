@@ -2,7 +2,7 @@
 
 Dependency Injection for Java and Android
 
-## How to include: [![](https://jitpack.io/v/io.freefair/injection.svg)](https://jitpack.io/#io.freefair/injection)
+## How to include: [![](https://jitpack.io/v/io.freefair/android-injection.svg)](https://jitpack.io/#io.freefair/android-injection)
 
 ## Core features:
 
