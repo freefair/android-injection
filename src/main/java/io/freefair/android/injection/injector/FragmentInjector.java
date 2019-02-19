@@ -2,8 +2,9 @@ package io.freefair.android.injection.injector;
 
 import android.content.Context;
 import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
 import android.view.View;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * @author Lars Grefer

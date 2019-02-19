@@ -5,9 +5,9 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath "io.freefair.gradle:android-gradle-plugins:3.1.1"
+        classpath "io.freefair.gradle:android-gradle-plugins:3.3.1"
     }
 }
 
@@ -21,16 +21,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'io.freefair.android-maven-jars'
 apply plugin: 'io.freefair.android-ci'
-apply plugin: 'io.freefair.android-pmd'
-apply plugin: 'io.freefair.android-findbugs'
-apply plugin: 'io.freefair.android-checkstyle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName project.version
         consumerProguardFiles 'proguard-rules.pro'
@@ -45,14 +42,14 @@ android {
 }
 
 dependencies {
-    api 'com.android.support:appcompat-v7:27.1.0'
+    api 'androidx.appcompat:appcompat:1.0.2'
     api 'io.freefair.android-util:function:3.1.0'
 
-    compileOnly 'com.google.android.support:wearable:2.2.0@aar'
-    compileOnly 'com.google.android.wearable:wearable:2.2.0'
+    compileOnly 'com.google.android.support:wearable:2.4.0@aar'
+    compileOnly 'com.google.android.wearable:wearable:2.4.0'
 
-    compileOnly 'org.projectlombok:lombok:1.16.20'
-    annotationProcessor 'org.projectlombok:lombok:1.16.20'
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    annotationProcessor 'org.projectlombok:lombok:1.18.4'
 
     testImplementation 'junit:junit:4.12'
 }
